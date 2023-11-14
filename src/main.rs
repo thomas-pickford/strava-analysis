@@ -5,13 +5,14 @@ use std::io::{self, Write};
 
 mod server;
 mod strava;
+mod auth;
 
 fn main() {
     if strava::is_setup() {
         strava::greet_user();
     }
     else {
-        strava::auth_new_user()
+        auth::auth_new_user()
     }
     
     println!("\nHow can I help you today?");
