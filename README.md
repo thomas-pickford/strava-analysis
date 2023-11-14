@@ -2,15 +2,11 @@
 Requires a 'dev' or 'nightly' version of rust to run. Ex: `rustup override set nightly`
 
 # How to use
-`cargo run -- <option>`
-
-### Valid options
-**setup:** Used to authenticate the user's strava account with the API app that powers this CLI
-**summary:** Returns the summary of the running activites for the day
-**splits <interval>:** Returns a json file with details about each lap interval (user specified) such as the distance, pace, time
-- Valid interval examples
-- mile
-- 1k
+Start the program: `cargo run`
+Choose an option from the menu
+- 1. Get an overview of yoru running activities today
+- 2. Get the splits from your running activities today (will add a interval option in the future)
+- q. Quit
 
 # Updates
 ### Release 1

@@ -1,30 +1,41 @@
 // Required for Rocket code generation to work
 #![feature(decl_macro)]
 
-use structopt::StructOpt;
+use std::io::{self, Write};
+
 mod server;
 mod strava;
 
-#[derive(Debug, StructOpt)]
-enum Args {
-    #[structopt(name = "setup", about = "Authenticates the user of the Args app")]
-    Setup {},
-    #[structopt(name = "summary", about = "Get the activities for the day")]
-    Summary {},
-    #[structopt(
-        name = "splits",
-        about = "Gets the data stream and calculates the splits"
-    )]
-    Splits {
-        interval: String, // mile, 1k, etc
-    },
-}
-
 fn main() {
-    let args = Args::from_args();
-    match args {
-        Args::Setup {} => strava::auth_new_user(),
-        Args::Summary {} => strava::get_summary(),
-        Args::Splits { interval } => strava::get_splits(interval),
+    if strava::is_setup() {
+        strava::greet_user();
+    }
+    else {
+        strava::auth_new_user()
+    }
+    
+    println!("\nHow can I help you today?");
+    println!("1. Get an overview of your running activities today");
+    println!("2. Get the splits from your running activities today");
+    println!("q. Quit");
+    
+    loop {
+
+        let mut input = String::new();
+        print!("> ");
+        io::stdout().flush().expect("Failed to flush stdout");
+        io::stdin().read_line(&mut input).expect("failed to read input");
+
+        let trimmed_input = input.trim();
+
+        match trimmed_input {
+            "1" => strava::get_summary(),
+            "2" => strava::get_splits(),
+            "q" => {
+                println!("Quitting the app. Goodbye!");
+                break;
+            }
+            _ => println!("Invalid option. Try again."),
+        }
     }
 }
