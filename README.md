@@ -12,7 +12,12 @@ Choose an option from the menu
 ### Release 1
 - Ability to authenticate the a user with the CLI
 - Stores the users auth details for later use
-- Placeholder functions for summary and splits options
+- Gives a rough outline of activity details in the summary
+- Retrieves the data streams and prints a count of how many data points are in each activity stream
+
+### Next steps
+- Format summary with user selected distances
+- Get splits from data stream using user defined distances
 
 # Acknowledgments
 Strava Authentication - https://francoisbest.com/posts/2019/strava-auth-cli-in-rust
