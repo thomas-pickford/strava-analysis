@@ -31,7 +31,27 @@ fn main() {
 
         match trimmed_input {
             "1" => strava::get_summary(),
-            "2" => strava::get_splits(),
+            "2" => {
+                println!("Pick split distance (mile, 1k):");
+                loop {
+                    let mut interval_size = String::new();
+                    print!("split distance> ");
+                    io::stdout().flush().expect("Failed to flush stdout");
+                    io::stdin().read_line(&mut interval_size).expect("failed to read input");
+                    let upper = interval_size.trim().to_ascii_uppercase();
+                    match upper.as_str() {
+                        "MILE" | "1K" => {
+                            strava::get_splits(upper);
+                            break;
+                        },
+                        "Q" => {
+                            println!("Cancelled split request");
+                            break;
+                        },
+                        _ => println!("Unsupported distance. Please choose from the following (mile, 1k)")
+                    }
+                }
+            },
             "q" => {
                 println!("Quitting the app. Goodbye!");
                 break;
