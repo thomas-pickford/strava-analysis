@@ -56,15 +56,21 @@ fn get_activities() -> Vec<Activity> {
     }
 }
 
-pub fn get_summary() {
+pub fn get_summary(interval: String) {
     let activities = get_activities();
     for activity in activities {
-        // TODO: output distance in either mile/km
-        // output total time and pace
-        println!(
-            "Name: {}, Distance: {}, Moving Time: {}",
-            activity.name, activity.distance, format_time(activity.moving_time)
-        );
+        println!("{}", activity.name);
+        if interval == "1K" {
+            let distance = activity.distance / 1000.0;
+            println!("Distance: {:.2}K", distance);
+            println!("Pace: {} min/k", format_time((activity.moving_time as f32 / distance).round() as i32));
+        }
+        else if interval == "MILE" {
+            let distance = activity.distance * 0.000621371;
+            println!("Distance: {:.2}mi", distance);
+            println!("Pace: {} min/mi", format_time((activity.moving_time as f32 / distance).round() as i32));
+        }
+        println!( "Moving Time: {}", format_time(activity.moving_time));
     }
 }
 
@@ -96,7 +102,6 @@ struct MovingStream {
     original_size: usize,
 }
 
-// pub fn get_splits(interval: String) {
 pub fn get_splits(interval: String) {
     let activities = get_activities();
     for activity in activities {
@@ -144,7 +149,7 @@ pub fn get_splits(interval: String) {
                     // stopped_sum += stopped_time;
 
                     let moving_time = elapsed_time - stopped_time;
-                    println!("Lap {} {} pace", cnt, format_pace(size, distance, moving_time));
+                    println!("Lap {} {} pace", cnt, calc_pace(size, distance, moving_time));
                     start = cur;
                     cnt += 1;
                 }
@@ -160,16 +165,24 @@ pub fn get_splits(interval: String) {
 }
 
 fn format_time(moving_time: i32) -> String {
-    let min = moving_time / 60;
+    let mut time = String::new();
+    let mut min = moving_time / 60;
     let sec = moving_time % 60;
-    if sec < 10 {
-        format!("{}:0{}", min, sec)
-    } else {
-        format!("{}:{}", min, sec)
+    if min > 60 {
+        let hour = min / 60;
+        min = min % 60;
+        time.push_str(&format!("{}:", hour));
     }
+    if sec < 10 {
+        time.push_str(&format!("{}:0{}", min, sec));
+    } else {
+        time.push_str(&format!("{}:{}", min, sec));
+    }
+
+    time
 }
 
-fn format_pace(expected_distance: f32, actual_distance: f32, moving_time: i32) -> String {
+fn calc_pace(expected_distance: f32, actual_distance: f32, moving_time: i32) -> String {
     let pace = (moving_time as f32 / (actual_distance / expected_distance)).round() as i32;
     format_time(pace)
 }
