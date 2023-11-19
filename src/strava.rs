@@ -70,27 +70,27 @@ pub fn get_summary() {
 
 #[derive(Debug, Deserialize)]
 struct Streams {
-    distance: DistanceData,
-    time: TimeData,
-    moving: MovingData,
+    distance: DistanceStream,
+    time: TimeStream,
+    moving: MovingStream,
 }
 
 #[derive(Debug, Deserialize)]
-struct DistanceData {
+struct DistanceStream {
     // each data point is how far the user has gone in meters
     data: Vec<f32>,
     original_size: usize,
 }
 
 #[derive(Debug, Deserialize)]
-struct TimeData {
+struct TimeStream {
     // each data point is how long the activity has been running in seconds
     data: Vec<i32>,
     original_size: usize,
 }
 
 #[derive(Debug, Deserialize)]
-struct MovingData {
+struct MovingStream {
     // each data point is a bool on whether or not the user was moving
     data: Vec<bool>,
     original_size: usize,
