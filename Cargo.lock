@@ -1422,8 +1422,8 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3015a7d0a5fd5105c91c3710d42f9ccf0abfb287d62206484dcc67f9569a6483"
 
 [[package]]
-name = "strava-analysis"
-version = "0.1.1"
+name = "strava"
+version = "0.1.0"
 dependencies = [
  "chrono",
  "reqwest",
@@ -1432,6 +1432,14 @@ dependencies = [
  "serde_json",
  "structopt",
  "webbrowser",
+]
+
+[[package]]
+name = "strava-analysis"
+version = "0.1.1"
+dependencies = [
+ "chrono",
+ "strava",
 ]
 
 [[package]]

@@ -1,3 +1,4 @@
+workspace = { members = ["strava"] }
 [package]
 name = "strava-analysis"
 version = "0.1.1"
@@ -6,10 +7,5 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-reqwest = { version = "0.11", features = ["json", "blocking"] }
-rocket = "0.4.11"
-structopt = "0.3.26"
-webbrowser = "0.8.12"
-serde = { version = "1.0.85", features = ["derive"] }
-serde_json = "1.0.37"
+strava = { path = "./strava" }
 chrono = "0.4.31"
