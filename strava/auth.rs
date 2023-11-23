@@ -48,15 +48,12 @@ impl AuthTokens {
                 secrets.client_secret,
             ) {
                 Ok(refresh) => {
-                    if let Ok(results_str) = serde_json::to_string_pretty(&refresh) {
-                        // write to file
-                        if let Err(err) = fs::write(user, &results_str) {
-                            eprintln!("Error saving auth tokens {}", err);
-                            std::process::exit(1);
-                        }
-                        tokens = serde_json::from_str(&results_str).unwrap();
-                    } else {
-                        eprintln!("Error serializing auth tokens to JSON");
+                    // write to file
+                    tokens = serde_json::from_str(&refresh.body).unwrap();
+                    if let Err(err) =
+                        fs::write(user, serde_json::to_string_pretty(&tokens).unwrap())
+                    {
+                        eprintln!("Error saving auth tokens {}", err);
                         std::process::exit(1);
                     }
                 }
@@ -97,7 +94,7 @@ pub fn auth_new_user(
             match exchange_token(&auth_info.code, client_id, client_secret) {
                 Ok(response) => {
                     // filter out other return info
-                    let tokens: AuthTokens = serde_json::from_str(&response).unwrap();
+                    let tokens: AuthTokens = serde_json::from_str(&response.body).unwrap();
                     if let Ok(results_str) = serde_json::to_string_pretty(&tokens) {
                         Ok(results_str)
                     } else {

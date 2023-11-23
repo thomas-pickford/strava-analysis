@@ -1,4 +1,5 @@
 use crate::api::get_response;
+use reqwest::StatusCode;
 use serde::Deserialize;
 
 #[derive(Debug, Deserialize)]
@@ -35,8 +36,12 @@ pub fn get_streams(id: i64, keys: &str, access_token: &str) -> Option<Streams> {
     let params = format!("?keys={}&key_by_type=true", keys);
 
     if let Ok(response) = get_response(&path, &params, access_token) {
-        let streams: Streams = serde_json::from_str(&response).unwrap();
-        Some(streams)
+        if response.status == StatusCode::OK {
+            let streams: Streams = serde_json::from_str(&response.body).unwrap();
+            Some(streams)
+        } else {
+            None
+        }
     } else {
         None
     }

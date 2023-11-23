@@ -1,8 +1,15 @@
+use reqwest::StatusCode;
 use std::collections::HashMap;
 
 const BASE_URL: &str = "https://www.strava.com/api/v3";
 
-type APIResponse = Result<String, reqwest::Error>;
+type APIResponse = Result<Response, reqwest::Error>;
+
+#[derive(Debug)]
+pub struct Response {
+    pub status: StatusCode,
+    pub body: String,
+}
 
 pub fn get_response(path: &str, params: &str, token: &str) -> APIResponse {
     let response = reqwest::blocking::Client::new()
@@ -11,7 +18,10 @@ pub fn get_response(path: &str, params: &str, token: &str) -> APIResponse {
         .send();
 
     match response {
-        Ok(response) => Ok(String::from(&response.text().unwrap())),
+        Ok(response) => Ok(Response {
+            status: response.status(),
+            body: String::from(&response.text().unwrap()),
+        }),
         Err(err) => {
             println!("There was an error getting your activities, please try again.");
             Err(err)
@@ -52,7 +62,10 @@ pub fn exchange_token(code: &str, id: u32, secret: &str) -> APIResponse {
         .send();
 
     match response {
-        Ok(response) => Ok(String::from(&response.text().unwrap())),
+        Ok(response) => Ok(Response {
+            status: response.status(),
+            body: String::from(&response.text().unwrap()),
+        }),
         Err(err) => {
             println!("There was an error getting your activities, please try again.");
             Err(err)
@@ -73,7 +86,10 @@ pub fn refresh_token(refresh_token: &str, client_id: u32, client_secret: String)
         .send();
 
     match response {
-        Ok(response) => Ok(String::from(&response.text().unwrap())),
+        Ok(response) => Ok(Response {
+            status: response.status(),
+            body: String::from(&response.text().unwrap()),
+        }),
         Err(err) => {
             println!("There was an error getting your activities, please try again.");
             Err(err)

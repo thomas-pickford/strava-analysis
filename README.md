@@ -29,6 +29,12 @@ Choose an option from the menu
 - Implement `get_summary` to print overview of activity stats
 - Format time h:m:s instead of m:s
 
+### Version 0.2.0
+- Restructure modules to create a strava crate. Expandable to encorporate more/all of the strava API
+- Complete data stream analysis to get lap splits 
+- Store activity laps in json file
+- Option to get a summary of week activities
+
 ### Next steps
 - Format summary with user selected distances
 - Get splits from data stream using user defined distances

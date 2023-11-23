@@ -1,10 +1,22 @@
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 use crate::api::get_response;
 
-#[derive(Debug, Deserialize)]
+use serde_json;
+
+#[derive(Debug, Serialize, Deserialize, Default)]
 pub struct Activity {
     pub id: i64,
+    pub name: String,
+    pub distance: f32,
+    pub moving_time: i32,
+    pub manual: bool,
+    pub start_date_local: String,
+    pub laps: Option<Vec<Lap>>,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct Lap {
     pub name: String,
     pub distance: f32,
     pub moving_time: i32,
@@ -29,7 +41,7 @@ pub fn list_activities(after: i64, before: i64, token: &str) -> Option<Vec<Activ
     let params = format!("?before={}&after={}", before, after);
 
     if let Ok(response) = get_response(&path, &params, token) {
-        let activities: Vec<Activity> = serde_json::from_str(&response).unwrap();
+        let activities: Vec<Activity> = serde_json::from_str(&response.body).unwrap();
         if activities.len() > 0 {
             Some(activities)
         } else {
