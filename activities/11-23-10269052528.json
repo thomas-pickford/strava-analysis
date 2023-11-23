@@ -1,0 +1,60 @@
+{
+  "id": 10269052528,
+  "name": "Earned Hannah a Turkey",
+  "distance": 16110.4,
+  "moving_time": 4000,
+  "manual": false,
+  "start_date_local": "2023-11-23T07:16:36Z",
+  "laps": [
+    {
+      "name": "Lap 1",
+      "distance": 1610.2,
+      "moving_time": 484
+    },
+    {
+      "name": "Lap 2",
+      "distance": 1610.0001,
+      "moving_time": 437
+    },
+    {
+      "name": "Lap 3",
+      "distance": 1622.0,
+      "moving_time": 358
+    },
+    {
+      "name": "Lap 4",
+      "distance": 1593.7998,
+      "moving_time": 318
+    },
+    {
+      "name": "Lap 5",
+      "distance": 1628.6001,
+      "moving_time": 333
+    },
+    {
+      "name": "Lap 6",
+      "distance": 1595.5,
+      "moving_time": 308
+    },
+    {
+      "name": "Lap 7",
+      "distance": 1614.5,
+      "moving_time": 422
+    },
+    {
+      "name": "Lap 8",
+      "distance": 1618.7002,
+      "moving_time": 439
+    },
+    {
+      "name": "Lap 9",
+      "distance": 1592.7002,
+      "moving_time": 429
+    },
+    {
+      "name": "Lap 10",
+      "distance": 1621.6992,
+      "moving_time": 424
+    }
+  ]
+}

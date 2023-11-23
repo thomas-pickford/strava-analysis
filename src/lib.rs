@@ -102,19 +102,19 @@ pub fn get_splits(interval: String, before: i64, after: i64, access_token: &str)
                             laps.push(lap);
                         }
                         activity.laps = Some(laps);
-
-                        match fs::write(
-                            format!("./activities/{}.json", activity.id),
-                            serde_json::to_string_pretty(&activity).unwrap(),
-                        ) {
-                            Ok(_) => println!("Successful wrote activity {} to file", activity.id),
-                            Err(_) => println!("Error writting activity {} to file", activity.id),
-                        }
                         break;
                     }
                 }
             } else {
-                println!("There was insufficient data to get your splits.");
+                println!("Manual activity {} has no laps", activity.id);
+            }
+            let date = NaiveDateTime::parse_from_str(&activity.start_date_local, "%Y-%m-%dT%H:%M:%SZ").expect("Bad date").format("%m-%d");
+            match fs::write(
+                format!("./activities/{}-{}.json", date, activity.id),
+                serde_json::to_string_pretty(&activity).unwrap(),
+            ) {
+                Ok(_) => println!("Successful wrote activity {} to file", activity.id),
+                Err(_) => println!("Error writting activity {} to file", activity.id),
             }
         }
     } else {

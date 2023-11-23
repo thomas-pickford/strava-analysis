@@ -1,0 +1,50 @@
+{
+  "id": 10229638464,
+  "name": "Mom, Dad, football is for me not running",
+  "distance": 12897.0,
+  "moving_time": 3580,
+  "manual": false,
+  "start_date_local": "2023-11-16T07:41:35Z",
+  "laps": [
+    {
+      "name": "Lap 1",
+      "distance": 1623.2,
+      "moving_time": 460
+    },
+    {
+      "name": "Lap 2",
+      "distance": 1611.9001,
+      "moving_time": 424
+    },
+    {
+      "name": "Lap 3",
+      "distance": 1594.6001,
+      "moving_time": 425
+    },
+    {
+      "name": "Lap 4",
+      "distance": 1626.2998,
+      "moving_time": 427
+    },
+    {
+      "name": "Lap 5",
+      "distance": 1599.3999,
+      "moving_time": 432
+    },
+    {
+      "name": "Lap 6",
+      "distance": 1610.6001,
+      "moving_time": 437
+    },
+    {
+      "name": "Lap 7",
+      "distance": 1602.7998,
+      "moving_time": 438
+    },
+    {
+      "name": "Lap 8",
+      "distance": 1606.0,
+      "moving_time": 454
+    }
+  ]
+}

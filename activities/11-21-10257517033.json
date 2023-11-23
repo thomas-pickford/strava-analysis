@@ -1,0 +1,60 @@
+{
+  "id": 10257517033,
+  "name": "Bad publicity 😳",
+  "distance": 16196.5,
+  "moving_time": 4164,
+  "manual": false,
+  "start_date_local": "2023-11-21T08:04:12Z",
+  "laps": [
+    {
+      "name": "Lap 1",
+      "distance": 1608.8,
+      "moving_time": 416
+    },
+    {
+      "name": "Lap 2",
+      "distance": 1616.9999,
+      "moving_time": 402
+    },
+    {
+      "name": "Lap 3",
+      "distance": 1615.2002,
+      "moving_time": 410
+    },
+    {
+      "name": "Lap 4",
+      "distance": 1598.8999,
+      "moving_time": 402
+    },
+    {
+      "name": "Lap 5",
+      "distance": 1620.7002,
+      "moving_time": 413
+    },
+    {
+      "name": "Lap 6",
+      "distance": 1605.7002,
+      "moving_time": 407
+    },
+    {
+      "name": "Lap 7",
+      "distance": 1606.8994,
+      "moving_time": 423
+    },
+    {
+      "name": "Lap 8",
+      "distance": 1618.6006,
+      "moving_time": 412
+    },
+    {
+      "name": "Lap 9",
+      "distance": 1610.2998,
+      "moving_time": 393
+    },
+    {
+      "name": "Lap 10",
+      "distance": 1597.2002,
+      "moving_time": 408
+    }
+  ]
+}

@@ -1,0 +1,85 @@
+{
+  "id": 10159702513,
+  "name": "Mission accomplished",
+  "distance": 22709.8,
+  "moving_time": 5790,
+  "manual": false,
+  "start_date_local": "2023-11-04T08:13:18Z",
+  "laps": [
+    {
+      "name": "Lap 1",
+      "distance": 1622.3,
+      "moving_time": 435
+    },
+    {
+      "name": "Lap 2",
+      "distance": 1610.7999,
+      "moving_time": 413
+    },
+    {
+      "name": "Lap 3",
+      "distance": 1606.2,
+      "moving_time": 394
+    },
+    {
+      "name": "Lap 4",
+      "distance": 1609.7002,
+      "moving_time": 434
+    },
+    {
+      "name": "Lap 5",
+      "distance": 1609.1997,
+      "moving_time": 405
+    },
+    {
+      "name": "Lap 6",
+      "distance": 1602.0,
+      "moving_time": 386
+    },
+    {
+      "name": "Lap 7",
+      "distance": 1607.7002,
+      "moving_time": 401
+    },
+    {
+      "name": "Lap 8",
+      "distance": 1621.7998,
+      "moving_time": 400
+    },
+    {
+      "name": "Lap 9",
+      "distance": 1611.9004,
+      "moving_time": 394
+    },
+    {
+      "name": "Lap 10",
+      "distance": 1597.5,
+      "moving_time": 409
+    },
+    {
+      "name": "Lap 11",
+      "distance": 1607.499,
+      "moving_time": 394
+    },
+    {
+      "name": "Lap 12",
+      "distance": 1613.8008,
+      "moving_time": 390
+    },
+    {
+      "name": "Lap 13",
+      "distance": 1602.1992,
+      "moving_time": 384
+    },
+    {
+      "name": "Lap 14",
+      "distance": 1609.5,
+      "moving_time": 426
+    },
+    {
+      "name": "Lap 15",
+      "distance": 177.70117,
+      "moving_time": 42
+    }
+  ]
+}

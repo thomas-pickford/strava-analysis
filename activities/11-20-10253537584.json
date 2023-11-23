@@ -1,0 +1,55 @@
+{
+  "id": 10253537584,
+  "name": "Turkey trot tuneup",
+  "distance": 13169.5,
+  "moving_time": 3619,
+  "manual": false,
+  "start_date_local": "2023-11-20T13:18:48Z",
+  "laps": [
+    {
+      "name": "Lap 1",
+      "distance": 1623.7,
+      "moving_time": 448
+    },
+    {
+      "name": "Lap 2",
+      "distance": 1618.9001,
+      "moving_time": 430
+    },
+    {
+      "name": "Lap 3",
+      "distance": 1595.3999,
+      "moving_time": 344
+    },
+    {
+      "name": "Lap 4",
+      "distance": 1610.1001,
+      "moving_time": 361
+    },
+    {
+      "name": "Lap 5",
+      "distance": 1609.6001,
+      "moving_time": 341
+    },
+    {
+      "name": "Lap 6",
+      "distance": 1602.3994,
+      "moving_time": 419
+    },
+    {
+      "name": "Lap 7",
+      "distance": 1628.1006,
+      "moving_time": 246
+    },
+    {
+      "name": "Lap 8",
+      "distance": 1593.3994,
+      "moving_time": 478
+    },
+    {
+      "name": "Lap 9",
+      "distance": 287.9004,
+      "moving_time": 82
+    }
+  ]
+}

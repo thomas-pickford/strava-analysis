@@ -1,0 +1,30 @@
+{
+  "id": 10196780562,
+  "name": "Evening Run",
+  "distance": 6145.4,
+  "moving_time": 1637,
+  "manual": false,
+  "start_date_local": "2023-11-10T18:45:17Z",
+  "laps": [
+    {
+      "name": "Lap 1",
+      "distance": 1612.7001,
+      "moving_time": 456
+    },
+    {
+      "name": "Lap 2",
+      "distance": 1604.2999,
+      "moving_time": 380
+    },
+    {
+      "name": "Lap 3",
+      "distance": 1611.2,
+      "moving_time": 393
+    },
+    {
+      "name": "Lap 4",
+      "distance": 1317.2002,
+      "moving_time": 389
+    }
+  ]
+}

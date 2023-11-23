@@ -1,0 +1,25 @@
+{
+  "id": 10214668013,
+  "name": "Across America <<< Around America",
+  "distance": 4877.2,
+  "moving_time": 1340,
+  "manual": false,
+  "start_date_local": "2023-11-13T16:43:51Z",
+  "laps": [
+    {
+      "name": "Lap 1",
+      "distance": 1628.1,
+      "moving_time": 465
+    },
+    {
+      "name": "Lap 2",
+      "distance": 1603.8999,
+      "moving_time": 428
+    },
+    {
+      "name": "Lap 3",
+      "distance": 1605.6001,
+      "moving_time": 420
+    }
+  ]
+}

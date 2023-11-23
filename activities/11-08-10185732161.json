@@ -1,0 +1,60 @@
+{
+  "id": 10185732161,
+  "name": "Chemical Ln",
+  "distance": 16112.6,
+  "moving_time": 4158,
+  "manual": false,
+  "start_date_local": "2023-11-08T07:11:31Z",
+  "laps": [
+    {
+      "name": "Lap 1",
+      "distance": 1617.5,
+      "moving_time": 451
+    },
+    {
+      "name": "Lap 2",
+      "distance": 1622.1001,
+      "moving_time": 421
+    },
+    {
+      "name": "Lap 3",
+      "distance": 1592.6997,
+      "moving_time": 403
+    },
+    {
+      "name": "Lap 4",
+      "distance": 1622.1001,
+      "moving_time": 397
+    },
+    {
+      "name": "Lap 5",
+      "distance": 1597.3999,
+      "moving_time": 405
+    },
+    {
+      "name": "Lap 6",
+      "distance": 1609.6006,
+      "moving_time": 404
+    },
+    {
+      "name": "Lap 7",
+      "distance": 1624.7998,
+      "moving_time": 396
+    },
+    {
+      "name": "Lap 8",
+      "distance": 1589.2002,
+      "moving_time": 400
+    },
+    {
+      "name": "Lap 9",
+      "distance": 1619.5996,
+      "moving_time": 413
+    },
+    {
+      "name": "Lap 10",
+      "distance": 1608.0,
+      "moving_time": 414
+    }
+  ]
+}
