@@ -3,6 +3,7 @@ use rocket::http::RawStr;
 use rocket::{get, routes, State};
 use std::sync::{mpsc, Mutex};
 
+/// Represents the authentication information.
 #[derive(Debug)]
 pub struct AuthInfo {
     pub code: String,
@@ -10,6 +11,20 @@ pub struct AuthInfo {
 }
 
 impl AuthInfo {
+    /// Creates a new `AuthInfo` instance.
+    ///
+    /// # Arguments
+    ///
+    /// * `code` - The authentication code.
+    /// * `scopes` - The list of scopes.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// let code = RawStr::from_str("12345");
+    /// let scopes = RawStr::from_str("scope1,scope2");
+    /// let auth_info = AuthInfo::new(&code, &scopes);
+    /// ```
     pub fn new(code: &RawStr, scopes: &RawStr) -> Self {
         Self {
             code: String::from(code.as_str()),
@@ -18,12 +33,28 @@ impl AuthInfo {
     }
 }
 
+/// Represents the result of an authentication operation.
 pub type AuthResult = Result<AuthInfo, String>;
+
+/// Represents the transmitter for sending authentication results.
 pub type Transmitter = mpsc::Sender<AuthResult>;
+
+/// Represents the mutex for the transmitter.
 pub type TxMutex<'req> = State<'req, Mutex<Transmitter>>;
 
 // --
 
+/// Handles the successful authentication request.
+///
+/// # Arguments
+///
+/// * `code` - The authentication code.
+/// * `scope` - The list of scopes.
+/// * `tx_mutex` - The mutex for the transmitter.
+///
+/// # Returns
+///
+/// A string indicating the success message.
 #[get("/?<code>&<scope>")]
 fn success(code: &RawStr, scope: &RawStr, tx_mutex: TxMutex) -> &'static str {
     let tx = tx_mutex.lock().unwrap();
@@ -31,6 +62,16 @@ fn success(code: &RawStr, scope: &RawStr, tx_mutex: TxMutex) -> &'static str {
     "✅ You may close this browser tab and return to the terminal."
 }
 
+/// Handles the error in the authentication request.
+///
+/// # Arguments
+///
+/// * `error` - The error message.
+/// * `tx_mutex` - The mutex for the transmitter.
+///
+/// # Returns
+///
+/// A string indicating the error message.
 #[get("/?<error>", rank = 2)]
 fn error(error: &RawStr, tx_mutex: TxMutex) -> String {
     let tx = tx_mutex.lock().unwrap();
@@ -40,6 +81,11 @@ fn error(error: &RawStr, tx_mutex: TxMutex) -> String {
 
 // --
 
+/// Starts the Rocket server.
+///
+/// # Arguments
+///
+/// * `tx` - The transmitter for sending authentication results.
 pub fn start(tx: Transmitter) {
     let config = Config::build(Environment::Development)
         .log_level(LoggingLevel::Off)

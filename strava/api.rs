@@ -11,7 +11,19 @@ pub struct Response {
     pub body: String,
 }
 
-pub fn get_response(path: &str, params: &str, token: &str) -> APIResponse {
+/// Sends a GET request to the specified API endpoint with the given parameters and authentication token.
+/// 
+/// # Arguments
+/// 
+/// * `path` - The path of the API endpoint.
+/// * `params` - The parameters to be included in the request.
+/// * `token` - The authentication token for the request.
+/// 
+/// # Returns
+/// 
+/// Returns an `APIResponse` containing the status code and body of the response if the request is successful,
+/// otherwise returns an `Err` with the corresponding error.
+pub fn get(path: &str, params: &str, token: &str) -> APIResponse {
     let response = reqwest::blocking::Client::new()
         .get(BASE_URL.to_owned() + path + params)
         .bearer_auth(&token)
@@ -34,8 +46,16 @@ pub fn get_response(path: &str, params: &str, token: &str) -> APIResponse {
 //     todo!();
 // }
 
-/// First time user authentication
-/// create the auth url
+/// Generates the authorization URL for Strava API authentication.
+///
+/// # Arguments
+///
+/// * `client_id` - The client ID provided by Strava.
+/// * `scopes` - The list of scopes required for the authentication.
+///
+/// # Returns
+///
+/// The authorization URL as a string.
 pub fn auth_url(client_id: u32, scopes: &[&str]) -> String {
     let params = [
         format!("client_id={}", client_id),
@@ -49,7 +69,17 @@ pub fn auth_url(client_id: u32, scopes: &[&str]) -> String {
     format!("https://www.strava.com/oauth/authorize?{}", params)
 }
 
-/// get the access and refresh tokens
+/// Exchanges an authorization code for an access token using the Strava API.
+///
+/// # Arguments
+///
+/// * `code` - The authorization code obtained from the user.
+/// * `id` - The client ID provided by Strava.
+/// * `secret` - The client secret provided by Strava.
+///
+/// # Returns
+///
+/// Returns an `APIResponse` containing the status code and response body.
 pub fn exchange_token(code: &str, id: u32, secret: &str) -> APIResponse {
     let mut body = HashMap::new();
     body.insert("client_id", format!("{}", id));
@@ -73,7 +103,17 @@ pub fn exchange_token(code: &str, id: u32, secret: &str) -> APIResponse {
     }
 }
 
-/// Requires user refresh_token, client_id and client_secret
+/// Refreshes the access token using the provided refresh token, client ID, and client secret.
+/// 
+/// # Arguments
+/// 
+/// * `refresh_token` - The refresh token used to obtain a new access token.
+/// * `client_id` - The client ID associated with the application.
+/// * `client_secret` - The client secret associated with the application.
+/// 
+/// # Returns
+/// 
+/// Returns an `APIResponse` containing the status code and response body.
 pub fn refresh_token(refresh_token: &str, client_id: u32, client_secret: String) -> APIResponse {
     let mut body = HashMap::new();
     body.insert("client_id", format!("{}", client_id));

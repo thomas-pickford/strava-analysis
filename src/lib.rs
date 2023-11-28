@@ -9,6 +9,15 @@ use strava::streams::{get_streams, Streams};
 pub static USER_AUTH: &str = "./auth/user.json";
 pub static SECRETS: &str = "./auth/secrets.json";
 
+/// Checks if the necessary setup has been completed.
+/// 
+/// This function checks if the `secrets.json` file exists in the specified path.
+/// If the file does not exist, it panics with an error message indicating missing APP secrets.
+/// It also checks if the `user.json` file exists.
+/// 
+/// # Returns
+/// 
+/// Returns `true` if the setup is complete, otherwise `false`.
 pub fn is_setup() -> bool {
     // check if the user.json file exists for main to determine if we should run setup or not.
     if !fs::metadata(SECRETS).is_ok() {
@@ -17,6 +26,25 @@ pub fn is_setup() -> bool {
     fs::metadata(USER_AUTH).is_ok()
 }
 
+/// Retrieves the summary of activities within a specified time interval.
+///
+/// # Arguments
+///
+/// * `interval` - A string representing the interval of the activities (e.g., "1K" for kilometers, "MILE" for miles).
+/// * `before` - An i64 representing the timestamp before which the activities should be retrieved.
+/// * `after` - An i64 representing the timestamp after which the activities should be retrieved.
+/// * `access_token` - A string slice representing the access token for authentication.
+///
+/// # Example
+///
+/// ```
+/// let interval = "1K".to_string();
+/// let before = 1635724800; // October 31, 2021 12:00:00 AM UTC
+/// let after = 1633046400; // September 30, 2021 12:00:00 AM UTC
+/// let access_token = "your_access_token";
+///
+/// get_summary(interval, before, after, access_token);
+/// ```
 pub fn get_summary(interval: String, before: i64, after: i64, access_token: &str) {
     if let Some(activities) = list_activities(after, before, access_token) {
         for activity in activities.iter().rev() {
@@ -49,6 +77,25 @@ pub fn get_summary(interval: String, before: i64, after: i64, access_token: &str
     }
 }
 
+/// Retrieves splits for activities within a specified time interval.
+///
+/// # Arguments
+///
+/// * `interval` - The interval for the splits (e.g., "MILE", "1K").
+/// * `before` - The timestamp for the end of the time interval.
+/// * `after` - The timestamp for the start of the time interval.
+/// * `access_token` - The access token for authentication.
+///
+/// # Example
+///
+/// ```
+/// let interval = String::from("MILE");
+/// let before = 1635724800; // October 31, 2021 12:00:00 AM UTC
+/// let after = 1633046400; // September 30, 2021 12:00:00 AM UTC
+/// let access_token = "your_access_token";
+///
+/// get_splits(interval, before, after, access_token);
+/// ```
 pub fn get_splits(interval: String, before: i64, after: i64, access_token: &str) {
     if let Some(activities) = list_activities(after, before, access_token) {
         for mut activity in activities {
@@ -122,6 +169,23 @@ pub fn get_splits(interval: String, before: i64, after: i64, access_token: &str)
     }
 }
 
+/// Calculates the moving time between two indices in the given `streams`.
+/// 
+/// The `start` and `end` indices specify the range of data to consider in the `streams`.
+/// The `streams` parameter should contain the relevant time and moving data.
+/// 
+/// The function iterates over the specified range and calculates the moving time by subtracting the stopped time from the elapsed time.
+/// Stopped time is calculated by summing the time intervals when the user was not moving.
+/// 
+/// # Arguments
+/// 
+/// * `start` - The starting index of the range.
+/// * `end` - The ending index of the range.
+/// * `streams` - The streams containing time and moving data.
+/// 
+/// # Returns
+/// 
+/// The calculated moving time as an `i32` value.
 pub fn calc_moving_time(start: usize, end: usize, streams: &Streams) -> i32 {
     let mut last_moving_time = 0;
     let mut stopped_time = 0;
@@ -140,6 +204,15 @@ pub fn calc_moving_time(start: usize, end: usize, streams: &Streams) -> i32 {
     elapsed_time - stopped_time
 }
 
+/// Formats the given moving time in seconds into a string representation of hours, minutes, and seconds.
+///
+/// # Arguments
+///
+/// * `moving_time` - The moving time in seconds.
+///
+/// # Returns
+///
+/// A string representation of the formatted time in the format "HH:MM:SS".
 pub fn format_time(moving_time: i32) -> String {
     let mut time = String::new();
     let mut min = moving_time / 60;
@@ -162,6 +235,22 @@ pub fn format_time(moving_time: i32) -> String {
     time
 }
 
+/// Prompts the user to select a formatting interval for lap size.
+/// 
+/// The user is prompted to enter a lap size interval, either "mile" or "1k".
+/// If the user enters a valid interval, it is returned as an `Option<String>`.
+/// If the user cancels the request by entering "Q", `None` is returned.
+/// If the user enters an unsupported distance, an error message is displayed and the prompt is repeated.
+/// 
+/// # Examples
+/// 
+/// ```
+/// let lap_size = get_lap_size();
+/// match lap_size {
+///     Some(interval) => println!("Selected lap size interval: {}", interval),
+///     None => println!("Request cancelled by user"),
+/// }
+/// ```
 pub fn get_lap_size() -> Option<String> {
     println!("Pick formatting interval (mile, 1k):");
     loop {
@@ -186,6 +275,15 @@ pub fn get_lap_size() -> Option<String> {
     }
 }
 
+/// Prompts the user to enter a date range and returns it as a tuple.
+/// The date range consists of a start date and an end date.
+/// The user is prompted to enter the start date and end date in the format "MM/DD/YYYY".
+/// If the user enters an invalid date range or chooses to quit by entering "q" or "Q",
+/// the function returns `None`.
+/// Otherwise, it returns `Some((lap_size, start_timestamp, end_timestamp))`,
+/// where `lap_size` is obtained from the `get_lap_size()` function,
+/// `start_timestamp` is the timestamp of the end of the start date,
+/// and `end_timestamp` is the timestamp of the start of the end date.
 pub fn get_date_range() -> Option<(String, i64, i64)> {
     println!("Example: \nstart> 11/08/2023\nend> 11/12/2023");
     loop {
@@ -231,6 +329,25 @@ pub fn get_date_range() -> Option<(String, i64, i64)> {
     }
 }
 
+/// Calculates the summary of a week's activities based on the given parameters.
+///
+/// # Arguments
+///
+/// * `interval` - The interval for distance calculation. Valid values are "1K" and "MILE".
+/// * `before` - The timestamp representing the end of the week.
+/// * `after` - The timestamp representing the start of the week.
+/// * `access_token` - The access token for authentication.
+///
+/// # Example
+///
+/// ```
+/// let interval = "1K".to_string();
+/// let before = 1635724800; // Timestamp for October 31, 2021
+/// let after = 1635110400; // Timestamp for October 25, 2021
+/// let access_token = "your_access_token";
+///
+/// get_week_summary(interval, before, after, access_token);
+/// ```
 pub fn get_week_summary(interval: String, before: i64, after: i64, access_token: &str) {
     if let Some(activities) = list_activities(after, before, access_token) {
         let mut distance = 0.0;

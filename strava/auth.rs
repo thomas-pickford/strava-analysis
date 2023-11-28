@@ -8,9 +8,7 @@ use crate::api::{auth_url, exchange_token, refresh_token};
 use crate::server;
 use webbrowser;
 
-// APP Secrets
-// type TokenResult = Result<User, reqwest::Error>;
-
+/// Represents the secrets required for the Strava API app.
 #[derive(Debug, Serialize, Deserialize)]
 pub struct AppSecrets {
     pub client_id: u32,
@@ -18,7 +16,15 @@ pub struct AppSecrets {
 }
 
 impl AppSecrets {
-    /// Get the API app client secrets
+    /// Get the API app client secrets from a file.
+    ///
+    /// # Arguments
+    ///
+    /// * `path` - The path to the file containing the app secrets.
+    ///
+    /// # Returns
+    ///
+    /// The `AppSecrets` struct containing the client ID and client secret.
     pub fn from_file(path: &str) -> AppSecrets {
         let input = fs::read_to_string(path).expect("Unable to read file");
         let secrets: AppSecrets = serde_json::from_str(&input).unwrap();
@@ -26,7 +32,7 @@ impl AppSecrets {
     }
 }
 
-// User Auth Tokens
+/// Represents the authentication tokens for a user.
 #[derive(Debug, Serialize, Deserialize)]
 pub struct AuthTokens {
     pub access_token: String,
@@ -35,9 +41,17 @@ pub struct AuthTokens {
 }
 
 impl AuthTokens {
-    /// Requires path to user token and app secrets
+    /// Get the authentication tokens for a user from a file.
+    ///
+    /// # Arguments
+    ///
+    /// * `user` - The path to the file containing the user token.
+    /// * `app_secrets` - The path to the file containing the app secrets.
+    ///
+    /// # Returns
+    ///
+    /// The `AuthTokens` struct containing the access token, expiration timestamp, and refresh token.
     pub fn from_file(user: &str, app_secrets: &str) -> AuthTokens {
-        // Get Access Token from file
         let secrets = AppSecrets::from_file(app_secrets);
         let input = fs::read_to_string(user).expect("Unable to read user token");
         let mut tokens: AuthTokens = serde_json::from_str(&input).unwrap();
@@ -48,7 +62,6 @@ impl AuthTokens {
                 secrets.client_secret,
             ) {
                 Ok(refresh) => {
-                    // write to file
                     tokens = serde_json::from_str(&refresh.body).unwrap();
                     if let Err(err) =
                         fs::write(user, serde_json::to_string_pretty(&tokens).unwrap())
@@ -64,17 +77,25 @@ impl AuthTokens {
     }
 }
 
-/// send the user to the auth url and wait for the response with the auth code
-/// callers responsibility to store the tokens
+/// Sends the user to the authentication URL and waits for the response with the authorization code.
+/// It is the caller's responsibility to store the tokens.
+///
+/// # Arguments
+///
+/// * `client_id` - The client ID of the app.
+/// * `client_secret` - The client secret of the app.
+/// * `scopes` - The scopes required for the authorization.
+///
+/// # Returns
+///
+/// The authorization code as a `Result` containing either the code as a `String` or an error message as a `String`.
 pub fn auth_new_user(
     client_id: u32,
     client_secret: &str,
     scopes: &[&str],
 ) -> Result<String, String> {
-    // Direct user to auth url
     let auth_url = auth_url(client_id, scopes);
     if webbrowser::open(&auth_url).is_err() {
-        // Try manually
         println!("Visit the following URL to authorize your app with Strava:");
         println!("{}\n", auth_url);
     }
@@ -84,16 +105,10 @@ pub fn auth_new_user(
         server::start(tx);
     });
 
-    // recv() is blocking, so the main thread will patiently
-    // wait for data to be sent through the channel.
-    // This way the server thread stays alive for as long as
-    // it's needed.
     match rx.recv().unwrap() {
         Ok(auth_info) => {
-            // get the auth token
             match exchange_token(&auth_info.code, client_id, client_secret) {
                 Ok(response) => {
-                    // filter out other return info
                     let tokens: AuthTokens = serde_json::from_str(&response.body).unwrap();
                     if let Ok(results_str) = serde_json::to_string_pretty(&tokens) {
                         Ok(results_str)
@@ -105,8 +120,6 @@ pub fn auth_new_user(
             }
         }
         Err(error) => {
-            // Let the async server send its response
-            // before the main thread exits.
             std::thread::sleep(std::time::Duration::from_secs(1));
             Err(error)
         }
