@@ -27,6 +27,8 @@ Choose an option from the menu
 - 5 - Get an overview of this weeks totals
 - q. Quit
 
+[Video demo](https://youtu.be/niZDrwEdaRs)
+
 # Updates
 ### Version 0.1.0
 - Ability to authenticate the a user with the CLI
@@ -44,10 +46,17 @@ Choose an option from the menu
 - Store activity laps in json file
 - Option to get a summary of week activities
 
+### Version 0.2.1
+- Rewrite auth callback to not require dev or nightly versions of rust
+
+### Version 0.2.2
+- Add analysis options
+
 ### Next steps
 - Format summary with user selected distances
 - Get splits from data stream using user defined distances
 
 # Acknowledgments
 Strava Authentication - https://francoisbest.com/posts/2019/strava-auth-cli-in-rust
+
 Strava API - https://developers.strava.com/docs/reference/
