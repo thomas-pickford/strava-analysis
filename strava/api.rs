@@ -12,15 +12,15 @@ pub struct Response {
 }
 
 /// Sends a GET request to the specified API endpoint with the given parameters and authentication token.
-/// 
+///
 /// # Arguments
-/// 
+///
 /// * `path` - The path of the API endpoint.
 /// * `params` - The parameters to be included in the request.
 /// * `token` - The authentication token for the request.
-/// 
+///
 /// # Returns
-/// 
+///
 /// Returns an `APIResponse` containing the status code and body of the response if the request is successful,
 /// otherwise returns an `Err` with the corresponding error.
 pub fn get(path: &str, params: &str, token: &str) -> APIResponse {
@@ -104,15 +104,15 @@ pub fn exchange_token(code: &str, id: u32, secret: &str) -> APIResponse {
 }
 
 /// Refreshes the access token using the provided refresh token, client ID, and client secret.
-/// 
+///
 /// # Arguments
-/// 
+///
 /// * `refresh_token` - The refresh token used to obtain a new access token.
 /// * `client_id` - The client ID associated with the application.
 /// * `client_secret` - The client secret associated with the application.
-/// 
+///
 /// # Returns
-/// 
+///
 /// Returns an `APIResponse` containing the status code and response body.
 pub fn refresh_token(refresh_token: &str, client_id: u32, client_secret: String) -> APIResponse {
     let mut body = HashMap::new();

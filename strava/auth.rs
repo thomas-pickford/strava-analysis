@@ -106,19 +106,17 @@ pub fn auth_new_user(
     });
 
     match rx.recv().unwrap() {
-        Ok(auth_info) => {
-            match exchange_token(&auth_info.code, client_id, client_secret) {
-                Ok(response) => {
-                    let tokens: AuthTokens = serde_json::from_str(&response.body).unwrap();
-                    if let Ok(results_str) = serde_json::to_string_pretty(&tokens) {
-                        Ok(results_str)
-                    } else {
-                        Err(String::from("Error serializing auth tokens to JSON"))
-                    }
+        Ok(auth_info) => match exchange_token(&auth_info.code, client_id, client_secret) {
+            Ok(response) => {
+                let tokens: AuthTokens = serde_json::from_str(&response.body).unwrap();
+                if let Ok(results_str) = serde_json::to_string_pretty(&tokens) {
+                    Ok(results_str)
+                } else {
+                    Err(String::from("Error serializing auth tokens to JSON"))
                 }
-                Err(_error) => Err(String::from("Error with exchanging token. Auth failed")),
             }
-        }
+            Err(_error) => Err(String::from("Error with exchanging token. Auth failed")),
+        },
         Err(error) => {
             std::thread::sleep(std::time::Duration::from_secs(1));
             Err(error)

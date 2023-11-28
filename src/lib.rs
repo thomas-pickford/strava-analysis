@@ -10,13 +10,13 @@ pub static USER_AUTH: &str = "./auth/user.json";
 pub static SECRETS: &str = "./auth/secrets.json";
 
 /// Checks if the necessary setup has been completed.
-/// 
+///
 /// This function checks if the `secrets.json` file exists in the specified path.
 /// If the file does not exist, it panics with an error message indicating missing APP secrets.
 /// It also checks if the `user.json` file exists.
-/// 
+///
 /// # Returns
-/// 
+///
 /// Returns `true` if the setup is complete, otherwise `false`.
 pub fn is_setup() -> bool {
     // check if the user.json file exists for main to determine if we should run setup or not.
@@ -155,7 +155,10 @@ pub fn get_splits(interval: String, before: i64, after: i64, access_token: &str)
             } else {
                 println!("Manual activity {} has no laps", activity.id);
             }
-            let date = NaiveDateTime::parse_from_str(&activity.start_date_local, "%Y-%m-%dT%H:%M:%SZ").expect("Bad date").format("%m-%d");
+            let date =
+                NaiveDateTime::parse_from_str(&activity.start_date_local, "%Y-%m-%dT%H:%M:%SZ")
+                    .expect("Bad date")
+                    .format("%m-%d");
             match fs::write(
                 format!("./activities/{}-{}.json", date, activity.id),
                 serde_json::to_string_pretty(&activity).unwrap(),
@@ -170,21 +173,21 @@ pub fn get_splits(interval: String, before: i64, after: i64, access_token: &str)
 }
 
 /// Calculates the moving time between two indices in the given `streams`.
-/// 
+///
 /// The `start` and `end` indices specify the range of data to consider in the `streams`.
 /// The `streams` parameter should contain the relevant time and moving data.
-/// 
+///
 /// The function iterates over the specified range and calculates the moving time by subtracting the stopped time from the elapsed time.
 /// Stopped time is calculated by summing the time intervals when the user was not moving.
-/// 
+///
 /// # Arguments
-/// 
+///
 /// * `start` - The starting index of the range.
 /// * `end` - The ending index of the range.
 /// * `streams` - The streams containing time and moving data.
-/// 
+///
 /// # Returns
-/// 
+///
 /// The calculated moving time as an `i32` value.
 pub fn calc_moving_time(start: usize, end: usize, streams: &Streams) -> i32 {
     let mut last_moving_time = 0;
@@ -236,14 +239,14 @@ pub fn format_time(moving_time: i32) -> String {
 }
 
 /// Prompts the user to select a formatting interval for lap size.
-/// 
+///
 /// The user is prompted to enter a lap size interval, either "mile" or "1k".
 /// If the user enters a valid interval, it is returned as an `Option<String>`.
 /// If the user cancels the request by entering "Q", `None` is returned.
 /// If the user enters an unsupported distance, an error message is displayed and the prompt is repeated.
-/// 
+///
 /// # Examples
-/// 
+///
 /// ```
 /// let lap_size = get_lap_size();
 /// match lap_size {
