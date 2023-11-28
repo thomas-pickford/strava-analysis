@@ -70,9 +70,9 @@ pub fn list_activities(after: i64, before: i64, token: &str) -> Option<Vec<Activ
     let path = "/athlete/activities";
     let params = format!("?before={}&after={}", before, after);
 
-    if let Ok(response) = get(&path, &params, token) {
+    if let Ok(response) = get(path, &params, token) {
         let activities: Vec<Activity> = serde_json::from_str(&response.body).unwrap();
-        if activities.len() > 0 {
+        if !activities.is_empty() {
             Some(activities)
         } else {
             None

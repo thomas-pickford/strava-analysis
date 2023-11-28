@@ -1,5 +1,4 @@
 use chrono::{NaiveDate, NaiveDateTime, NaiveTime};
-use serde_json;
 use std::fs;
 use std::io::{self, Write};
 
@@ -20,7 +19,7 @@ pub static SECRETS: &str = "./auth/secrets.json";
 /// Returns `true` if the setup is complete, otherwise `false`.
 pub fn is_setup() -> bool {
     // check if the user.json file exists for main to determine if we should run setup or not.
-    if !fs::metadata(SECRETS).is_ok() {
+    if fs::metadata(SECRETS).is_err() {
         panic!("Error: Missing APP secrets");
     }
     fs::metadata(USER_AUTH).is_ok()
@@ -222,7 +221,7 @@ pub fn format_time(moving_time: i32) -> String {
     let sec = moving_time % 60;
     if min > 60 {
         let hour = min / 60;
-        min = min % 60;
+        min %= 60;
         if min < 10 {
             time.push_str(&format!("{}:0", hour));
         } else {

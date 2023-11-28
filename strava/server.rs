@@ -28,7 +28,7 @@ impl AuthInfo {
     pub fn new(code: &RawStr, scopes: &RawStr) -> Self {
         Self {
             code: String::from(code.as_str()),
-            scopes: scopes.as_str().split(",").map(String::from).collect(),
+            scopes: scopes.as_str().split(',').map(String::from).collect(),
         }
     }
 }

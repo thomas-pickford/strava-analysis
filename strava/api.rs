@@ -26,7 +26,7 @@ pub struct Response {
 pub fn get(path: &str, params: &str, token: &str) -> APIResponse {
     let response = reqwest::blocking::Client::new()
         .get(BASE_URL.to_owned() + path + params)
-        .bearer_auth(&token)
+        .bearer_auth(token)
         .send();
 
     match response {
@@ -117,7 +117,7 @@ pub fn exchange_token(code: &str, id: u32, secret: &str) -> APIResponse {
 pub fn refresh_token(refresh_token: &str, client_id: u32, client_secret: String) -> APIResponse {
     let mut body = HashMap::new();
     body.insert("client_id", format!("{}", client_id));
-    body.insert("client_secret", String::from(client_secret));
+    body.insert("client_secret", client_secret);
     body.insert("grant_type", String::from("refresh_token"));
     body.insert("refresh_token", String::from(refresh_token));
     let response = reqwest::blocking::Client::new()
