@@ -21,7 +21,6 @@ fn main() {
         if let Ok(auth_resp) =
             strava::auth::auth_new_user(secrets.client_id, &secrets.client_secret, &scopes)
         {
-            println!("{}", auth_resp);
             match fs::write(USER_AUTH, auth_resp) {
                 Ok(_success) => println!("Successfully authenticated new user"),
                 Err(error) => panic!("Error: Unable to write response to file:\n{}", error),
