@@ -1,5 +1,5 @@
 use reqwest::StatusCode;
-use std::collections::HashMap;
+use serde::Serialize;
 
 const BASE_URL: &str = "https://www.strava.com/api/v3";
 
@@ -9,6 +9,22 @@ type APIResponse = Result<Response, reqwest::Error>;
 pub struct Response {
     pub status: StatusCode,
     pub body: String,
+}
+
+#[derive(Debug, Serialize)]
+struct ExchangeBody {
+    client_id: u32,
+    client_secret: String,
+    code: String,
+    grant_type: String,
+}
+
+#[derive(Debug, Serialize)]
+struct RefreshBody {
+    client_id: u32,
+    client_secret: String,
+    grant_type: String,
+    refresh_token: String,
 }
 
 /// Sends a GET request to the specified API endpoint with the given parameters and authentication token.
@@ -81,11 +97,12 @@ pub fn auth_url(client_id: u32, scopes: &[&str]) -> String {
 ///
 /// Returns an `APIResponse` containing the status code and response body.
 pub fn exchange_token(code: &str, id: u32, secret: &str) -> APIResponse {
-    let mut body = HashMap::new();
-    body.insert("client_id", format!("{}", id));
-    body.insert("client_secret", String::from(secret));
-    body.insert("code", String::from(code));
-    body.insert("grant_type", String::from("authorization_code"));
+    let body = ExchangeBody {
+        client_id: id,
+        client_secret: String::from(secret),
+        code: String::from(code),
+        grant_type: String::from("authorization_code"),
+    };
     let response = reqwest::blocking::Client::new()
         .post("https://www.strava.com/oauth/token")
         .json(&body)
@@ -115,11 +132,12 @@ pub fn exchange_token(code: &str, id: u32, secret: &str) -> APIResponse {
 ///
 /// Returns an `APIResponse` containing the status code and response body.
 pub fn refresh_token(refresh_token: &str, client_id: u32, client_secret: String) -> APIResponse {
-    let mut body = HashMap::new();
-    body.insert("client_id", format!("{}", client_id));
-    body.insert("client_secret", client_secret);
-    body.insert("grant_type", String::from("refresh_token"));
-    body.insert("refresh_token", String::from(refresh_token));
+    let body = RefreshBody {
+        client_id,
+        client_secret,
+        grant_type: String::from("refresh_token"),
+        refresh_token: String::from(refresh_token),
+    };
     let response = reqwest::blocking::Client::new()
         .post("https://www.strava.com/oauth/token")
         .json(&body)
