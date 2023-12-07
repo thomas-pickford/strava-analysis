@@ -1,4 +1,6 @@
+use chrono::NaiveDateTime;
 use serde::{Deserialize, Serialize};
+use std::fs;
 
 use crate::api::get;
 
@@ -20,6 +22,38 @@ pub struct Lap {
     pub name: String,
     pub distance: f32,
     pub moving_time: i32,
+}
+
+impl Activity {
+    /// Saves the activity data to a JSON file.
+    ///
+    /// The activity data is saved in a file with the format "{date}-{id}.json",
+    /// where {date} is the formatted start date of the activity in the format "MM-DD",
+    /// and {id} is the unique identifier of the activity.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// let activity = Activity {
+    ///     id: 123,
+    ///     start_date_local: "2023-10-15T08:30:00Z".to_string(),
+    ///     // ... other activity data ...
+    /// };
+    ///
+    /// activity.save_to_json();
+    /// ```
+    pub fn save_to_json(&self) {
+        let date = NaiveDateTime::parse_from_str(&self.start_date_local, "%Y-%m-%dT%H:%M:%SZ")
+            .expect("Bad date")
+            .format("%m-%d");
+        match fs::write(
+            format!("./activities/{}-{}.json", date, self.id),
+            serde_json::to_string_pretty(self).unwrap(),
+        ) {
+            Ok(_) => println!("Successful wrote activity {} to file", self.id),
+            Err(_) => println!("Error writting activity {} to file", self.id),
+        }
+    }
 }
 
 // create activity

@@ -2,7 +2,9 @@ use chrono::{Datelike, Duration, Local, NaiveDateTime, NaiveTime, Timelike};
 use std::fs;
 use std::io::{self, Write};
 
+use strava::activities::list_activities;
 use strava::auth::AuthTokens;
+use strava::streams::get_streams;
 use strava_analysis::*;
 
 fn main() {
@@ -71,22 +73,66 @@ fn main() {
         match trimmed_input {
             "1" => {
                 if let Some(lap_size) = get_lap_size() {
-                    get_summary(lap_size, before, after, &user.access_token);
+                    if let Some(activities) = list_activities(after, before, &user.access_token) {
+                        for activity in activities {
+                            get_summary(&lap_size, &activity);
+                        }
+                    } else {
+                        println!("No activities found!");
+                    }
                 }
             }
             "2" => {
                 if let Some(lap_size) = get_lap_size() {
-                    get_splits(lap_size, before, after, &user.access_token);
+                    if let Some(activities) = list_activities(after, before, &user.access_token) {
+                        let keys = ["distance", "time", "moving"].join(",");
+                        for mut activity in activities {
+                            if let Some(streams) =
+                                get_streams(activity.id, &keys, &user.access_token)
+                            {
+                                activity.laps = get_splits(&lap_size, &streams);
+                                activity.save_to_json();
+                            } else {
+                                println!("Manual activity {} has no laps", activity.id);
+                            }
+                        }
+                    } else {
+                        println!("No activities found!");
+                    }
                 }
             }
             "3" => {
                 if let Some(params) = get_date_range() {
-                    get_splits(params.0, params.1, params.2, &user.access_token);
+                    if let Some(activities) =
+                        list_activities(params.1, params.2, &user.access_token)
+                    {
+                        let keys = ["distance", "time", "moving"].join(",");
+                        for mut activity in activities {
+                            if let Some(streams) =
+                                get_streams(activity.id, &keys, &user.access_token)
+                            {
+                                activity.laps = get_splits(&params.0, &streams);
+                                activity.save_to_json();
+                            } else {
+                                println!("Manual activity {} has no laps", activity.id);
+                            }
+                        }
+                    } else {
+                        println!("No activities found!");
+                    }
                 }
             }
             "4" => {
                 if let Some(params) = get_date_range() {
-                    get_summary(params.0, params.1, params.2, &user.access_token);
+                    if let Some(activities) =
+                        list_activities(params.1, params.2, &user.access_token)
+                    {
+                        for activity in activities {
+                            get_summary(&params.0, &activity);
+                        }
+                    } else {
+                        println!("No activities found!");
+                    }
                 }
             }
             "5" => {
@@ -96,18 +142,21 @@ fn main() {
                     let week_start = NaiveDateTime::new(
                         today - Duration::days((weekday - 1) as i64),
                         NaiveTime::from_hms_opt(0, 0, 0).unwrap(),
-                    );
+                    )
+                    .timestamp();
                     let week_end = NaiveDateTime::new(
                         today + Duration::days((7 - weekday) as i64),
                         NaiveTime::from_hms_opt(23, 59, 59).unwrap(),
-                    );
+                    )
+                    .timestamp();
 
-                    get_week_summary(
-                        lap_size,
-                        week_end.timestamp(),
-                        week_start.timestamp(),
-                        &user.access_token,
-                    );
+                    if let Some(activities) =
+                        list_activities(week_start, week_end, &user.access_token)
+                    {
+                        get_week_summary(&lap_size, activities);
+                    } else {
+                        println!("No activities for this week yet!");
+                    }
                 }
             }
             "q" => {

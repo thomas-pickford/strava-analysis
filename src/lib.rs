@@ -2,8 +2,8 @@ use chrono::{NaiveDate, NaiveDateTime, NaiveTime};
 use std::fs;
 use std::io::{self, Write};
 
-use strava::activities::{list_activities, Lap};
-use strava::streams::{get_streams, Streams};
+use strava::activities::{Activity, Lap};
+use strava::streams::Streams;
 
 pub static USER_AUTH: &str = "./auth/user.json";
 pub static SECRETS: &str = "./auth/secrets.json";
@@ -30,144 +30,132 @@ pub fn is_setup() -> bool {
 /// # Arguments
 ///
 /// * `interval` - A string representing the interval of the activities (e.g., "1K" for kilometers, "MILE" for miles).
-/// * `before` - An i64 representing the timestamp before which the activities should be retrieved.
-/// * `after` - An i64 representing the timestamp after which the activities should be retrieved.
-/// * `access_token` - A string slice representing the access token for authentication.
+/// * `activity` - A reference to an `Activity` struct representing the activity details.
 ///
 /// # Example
 ///
 /// ```
-/// let interval = "1K".to_string();
-/// let before = 1635724800; // October 31, 2021 12:00:00 AM UTC
-/// let after = 1633046400; // September 30, 2021 12:00:00 AM UTC
-/// let access_token = "your_access_token";
+/// use chrono::NaiveDateTime;
+/// use strava_analysis::get_summary;
 ///
-/// get_summary(interval, before, after, access_token);
+/// struct Activity {
+///     name: String,
+///     start_date_local: String,
+///     distance: f32,
+///     moving_time: i32,
+/// }
+///
+/// let interval = "1K".to_string();
+/// let activity = Activity {
+///     name: "Running".to_string(),
+///     start_date_local: "2021-10-01T08:00:00Z".to_string(),
+///     distance: 5000.0,
+///     moving_time: 1800,
+/// };
+///
+/// get_summary(&interval, &activity);
 /// ```
-pub fn get_summary(interval: String, before: i64, after: i64, access_token: &str) {
-    if let Some(activities) = list_activities(after, before, access_token) {
-        for activity in activities.iter().rev() {
-            println!("{}", activity.name);
-            println!(
-                "Date: {}",
-                NaiveDateTime::parse_from_str(&activity.start_date_local, "%Y-%m-%dT%H:%M:%SZ")
-                    .expect("Bad date")
-                    .format("%m-%d-%Y")
-            );
-            if interval == "1K" {
-                let distance = activity.distance / 1000.0;
-                println!("Distance: {:.2}K", distance);
-                println!(
-                    "Pace: {} min/k",
-                    format_time((activity.moving_time as f32 / distance).round() as i32)
-                );
-            } else if interval == "MILE" {
-                let distance = activity.distance * 0.000621371;
-                println!("Distance: {:.2}mi", distance);
-                println!(
-                    "Pace: {} min/mi",
-                    format_time((activity.moving_time as f32 / distance).round() as i32)
-                );
-            }
-            println!("Moving Time: {}\n", format_time(activity.moving_time));
-        }
-    } else {
-        println!("No activities found!");
+pub fn get_summary(interval: &String, activity: &Activity) {
+    println!("{}", activity.name);
+    println!(
+        "Date: {}",
+        NaiveDateTime::parse_from_str(&activity.start_date_local, "%Y-%m-%dT%H:%M:%SZ")
+            .expect("Bad date")
+            .format("%m-%d-%Y")
+    );
+    if interval == "1K" {
+        let distance = activity.distance / 1000.0;
+        println!("Distance: {:.2}K", distance);
+        println!(
+            "Pace: {} min/k",
+            format_time((activity.moving_time as f32 / distance).round() as i32)
+        );
+    } else if interval == "MILE" {
+        let distance = activity.distance * 0.000621371;
+        println!("Distance: {:.2}mi", distance);
+        println!(
+            "Pace: {} min/mi",
+            format_time((activity.moving_time as f32 / distance).round() as i32)
+        );
     }
+    println!("Moving Time: {}\n", format_time(activity.moving_time));
 }
 
-/// Retrieves splits for activities within a specified time interval.
+/// Retrieves splits for activities within a specified distance interval.
 ///
 /// # Arguments
 ///
 /// * `interval` - The interval for the splits (e.g., "MILE", "1K").
-/// * `before` - The timestamp for the end of the time interval.
-/// * `after` - The timestamp for the start of the time interval.
-/// * `access_token` - The access token for authentication.
+/// * `streams` - The streams containing distance data.
+///
+/// # Returns
+///
+/// An optional vector of `Lap` structs representing the splits.
 ///
 /// # Example
 ///
 /// ```
-/// let interval = String::from("MILE");
-/// let before = 1635724800; // October 31, 2021 12:00:00 AM UTC
-/// let after = 1633046400; // September 30, 2021 12:00:00 AM UTC
-/// let access_token = "your_access_token";
+/// use strava_analysis::get_splits; 
+/// use strava::streamsStreams;
+/// use strava::activities::Lap;
 ///
-/// get_splits(interval, before, after, access_token);
+/// let interval = String::from("MILE");
+/// let streams = Streams::new(); // Replace with actual streams data
+///
+/// let splits = get_splits(&interval, &streams);
+/// if let Some(splits) = splits {
+///     for lap in splits {
+///         println!("Lap Name: {}", lap.name);
+///         println!("Lap Distance: {}", lap.distance);
+///         println!("Lap Moving Time: {}", lap.moving_time);
+///     }
+/// }
 /// ```
-pub fn get_splits(interval: String, before: i64, after: i64, access_token: &str) {
-    if let Some(activities) = list_activities(after, before, access_token) {
-        for mut activity in activities {
-            let mut laps: Vec<Lap> = Vec::new();
+pub fn get_splits(interval: &String, streams: &Streams) -> Option<Vec<Lap>> {
+    let mut laps: Vec<Lap> = Vec::new();
+    let mut lap_size = 0.0;
+    match interval.as_str() {
+        "MILE" => lap_size = 1609.34,
+        "1K" => lap_size = 1000.0,
+        _ => println!("Shouldn't hit this"),
+    }
 
-            let keys = ["distance", "time", "moving"].join(",");
-            if let Some(streams) = get_streams(activity.id, &keys, access_token) {
-                let mut lap_size = 0.0;
-                match interval.as_str() {
-                    "MILE" => lap_size = 1609.34,
-                    "1K" => lap_size = 1000.0,
-                    _ => println!("Shouldn't hit this"),
-                }
+    let mut lap_cnt = 1;
+    let mut start: usize = 0;
+    let mut cur: usize = 0;
+    let mut distance: f32;
+    let end = streams.distance.original_size;
+    loop {
+        if streams.distance.data[cur] / lap_size > lap_cnt as f32 {
+            distance = streams.distance.data[cur] - streams.distance.data[start];
+            let moving_time = calc_moving_time(start, cur, &streams);
+            let lap = Lap {
+                name: format!("Lap {}", lap_cnt),
+                distance,
+                moving_time,
+            };
 
-                let mut lap_cnt = 1;
-                let mut start: usize = 0;
-                let mut cur: usize = 0;
-                let mut distance: f32;
-                let end = streams.distance.original_size;
-                loop {
-                    if streams.distance.data[cur] / lap_size > lap_cnt as f32 {
-                        distance = streams.distance.data[cur] - streams.distance.data[start];
-                        let moving_time = calc_moving_time(start, cur, &streams);
-                        let lap = Lap {
-                            name: format!("Lap {}", lap_cnt),
-                            distance,
-                            moving_time,
-                        };
-
-                        laps.push(lap);
-                        start = cur;
-                        lap_cnt += 1;
-                    }
-                    cur += 1;
-
-                    // check for missed distance at the end less than the specified lap size
-                    if cur == end {
-                        if (streams.distance.data[end - 1] - streams.distance.data[start])
-                            / lap_size
-                            >= 0.1
-                        {
-                            distance =
-                                streams.distance.data[end - 1] - streams.distance.data[start];
-                            let moving_time = calc_moving_time(start, end - 1, &streams);
-                            let lap = Lap {
-                                name: format!("Lap {}", lap_cnt),
-                                distance,
-                                moving_time,
-                            };
-
-                            laps.push(lap);
-                        }
-                        activity.laps = Some(laps);
-                        break;
-                    }
-                }
-            } else {
-                println!("Manual activity {} has no laps", activity.id);
-            }
-            let date =
-                NaiveDateTime::parse_from_str(&activity.start_date_local, "%Y-%m-%dT%H:%M:%SZ")
-                    .expect("Bad date")
-                    .format("%m-%d");
-            match fs::write(
-                format!("./activities/{}-{}.json", date, activity.id),
-                serde_json::to_string_pretty(&activity).unwrap(),
-            ) {
-                Ok(_) => println!("Successful wrote activity {} to file", activity.id),
-                Err(_) => println!("Error writting activity {} to file", activity.id),
-            }
+            laps.push(lap);
+            start = cur;
+            lap_cnt += 1;
         }
-    } else {
-        println!("No activities found!");
+        cur += 1;
+
+        // check for missed distance at the end less than the specified lap size
+        if cur == end {
+            if (streams.distance.data[end - 1] - streams.distance.data[start]) / lap_size >= 0.1 {
+                distance = streams.distance.data[end - 1] - streams.distance.data[start];
+                let moving_time = calc_moving_time(start, end - 1, &streams);
+                let lap = Lap {
+                    name: format!("Lap {}", lap_cnt),
+                    distance,
+                    moving_time,
+                };
+
+                laps.push(lap);
+            }
+            return Some(laps);
+        }
     }
 }
 
@@ -247,6 +235,8 @@ pub fn format_time(moving_time: i32) -> String {
 /// # Examples
 ///
 /// ```
+/// use strava_analysis::get_lap_size;
+///
 /// let lap_size = get_lap_size();
 /// match lap_size {
 ///     Some(interval) => println!("Selected lap size interval: {}", interval),
@@ -319,9 +309,9 @@ pub fn get_date_range() -> Option<(String, i64, i64)> {
                 println!();
                 return Some((
                     lap_size,
-                    NaiveDateTime::new(before.unwrap(), NaiveTime::from_hms_opt(23, 59, 59)?)
-                        .timestamp(),
                     NaiveDateTime::new(after.unwrap(), NaiveTime::from_hms_opt(0, 0, 0)?)
+                        .timestamp(),
+                    NaiveDateTime::new(before.unwrap(), NaiveTime::from_hms_opt(23, 59, 59)?)
                         .timestamp(),
                 ));
             }
@@ -331,50 +321,49 @@ pub fn get_date_range() -> Option<(String, i64, i64)> {
     }
 }
 
-/// Calculates the summary of a week's activities based on the given parameters.
+/// Calculates the summary of a week's activities based on the given distance interval.
 ///
 /// # Arguments
 ///
-/// * `interval` - The interval for distance calculation. Valid values are "1K" and "MILE".
-/// * `before` - The timestamp representing the end of the week.
-/// * `after` - The timestamp representing the start of the week.
-/// * `access_token` - The access token for authentication.
+/// * `interval` - A reference to a String representing the interval (e.g., "1K", "MILE").
+/// * `activities` - A vector of Activity objects representing the activities for the week.
 ///
 /// # Example
 ///
 /// ```
-/// let interval = "1K".to_string();
-/// let before = 1635724800; // Timestamp for October 31, 2021
-/// let after = 1635110400; // Timestamp for October 25, 2021
-/// let access_token = "your_access_token";
+/// use strava::activities::Activity;
 ///
-/// get_week_summary(interval, before, after, access_token);
+/// let interval = String::from("1K");
+/// let activities = vec![
+///     Activity { distance: 500.0, moving_time: 1200 },
+///     Activity { distance: 800.0, moving_time: 1800 },
+///     Activity { distance: 1200.0, moving_time: 2400 },
+/// ];
+///
+/// strava_analysis::get_week_summary(&interval, activities);
 /// ```
-pub fn get_week_summary(interval: String, before: i64, after: i64, access_token: &str) {
-    if let Some(activities) = list_activities(after, before, access_token) {
-        let mut distance = 0.0;
-        let mut moving_time = 0;
-        for activity in activities {
-            distance += activity.distance;
-            moving_time += activity.moving_time;
-        }
-
-        println!("Week Overview");
-        if interval == "1K" {
-            distance /= 1000.0;
-            println!("Distance: {:.2}K", distance);
-            println!(
-                "Pace: {} min/k",
-                format_time((moving_time as f32 / distance).round() as i32)
-            );
-        } else if interval == "MILE" {
-            distance *= 0.000621371;
-            println!("Distance: {:.2}mi", distance);
-            println!(
-                "Pace: {} min/mi",
-                format_time((moving_time as f32 / distance).round() as i32)
-            );
-        }
-        println!("Moving Time: {}\n", format_time(moving_time));
+pub fn get_week_summary(interval: &String, activities: Vec<Activity>) {
+    let mut distance = 0.0;
+    let mut moving_time = 0;
+    for activity in activities {
+        distance += activity.distance;
+        moving_time += activity.moving_time;
     }
+    println!("Week Overview");
+    if interval == "1K" {
+        distance /= 1000.0;
+        println!("Distance: {:.2}K", distance);
+        println!(
+            "Pace: {} min/k",
+            format_time((moving_time as f32 / distance).round() as i32)
+        );
+    } else if interval == "MILE" {
+        distance *= 0.000621371;
+        println!("Distance: {:.2}mi", distance);
+        println!(
+            "Pace: {} min/mi",
+            format_time((moving_time as f32 / distance).round() as i32)
+        );
+    }
+    println!("Moving Time: {}\n", format_time(moving_time));
 }
