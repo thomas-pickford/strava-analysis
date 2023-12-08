@@ -27,7 +27,7 @@ pub struct Lap {
 impl Activity {
     /// Saves the activity data to a JSON file.
     ///
-    /// The activity data is saved in a file with the format "{date}-{id}.json",
+    /// The activity data is saved in a file with the format "MM-DD-YYYY-{id}.json",
     /// where {date} is the formatted start date of the activity in the format "MM-DD",
     /// and {id} is the unique identifier of the activity.
     ///
@@ -51,7 +51,7 @@ impl Activity {
     pub fn save_to_json(&self) {
         let date = NaiveDateTime::parse_from_str(&self.start_date_local, "%Y-%m-%dT%H:%M:%SZ")
             .expect("Bad date")
-            .format("%m-%d");
+            .format("%m-%d-%Y");
         match fs::write(
             format!("./activities/{}-{}.json", date, self.id),
             serde_json::to_string_pretty(self).unwrap(),

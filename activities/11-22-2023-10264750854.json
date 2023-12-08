@@ -9,52 +9,52 @@
     {
       "name": "Lap 1",
       "distance": 1621.8999,
-      "moving_time": 436
+      "moving_time": 442
     },
     {
       "name": "Lap 2",
       "distance": 1607.2,
-      "moving_time": 414
+      "moving_time": 419
     },
     {
       "name": "Lap 3",
       "distance": 1610.0,
-      "moving_time": 423
+      "moving_time": 429
     },
     {
       "name": "Lap 4",
       "distance": 1609.8003,
-      "moving_time": 423
+      "moving_time": 429
     },
     {
       "name": "Lap 5",
       "distance": 1599.2998,
-      "moving_time": 438
+      "moving_time": 444
     },
     {
       "name": "Lap 6",
       "distance": 1613.2998,
-      "moving_time": 408
+      "moving_time": 414
     },
     {
       "name": "Lap 7",
       "distance": 1610.6006,
-      "moving_time": 409
+      "moving_time": 415
     },
     {
       "name": "Lap 8",
       "distance": 1617.0996,
-      "moving_time": 413
+      "moving_time": 418
     },
     {
       "name": "Lap 9",
       "distance": 1594.7998,
-      "moving_time": 400
+      "moving_time": 406
     },
     {
       "name": "Lap 10",
       "distance": 1613.2002,
-      "moving_time": 418
+      "moving_time": 423
     }
   ]
 }

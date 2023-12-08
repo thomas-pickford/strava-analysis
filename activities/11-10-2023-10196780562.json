@@ -9,22 +9,22 @@
     {
       "name": "Lap 1",
       "distance": 1612.7001,
-      "moving_time": 456
+      "moving_time": 462
     },
     {
       "name": "Lap 2",
       "distance": 1604.2999,
-      "moving_time": 380
+      "moving_time": 382
     },
     {
       "name": "Lap 3",
       "distance": 1611.2,
-      "moving_time": 393
+      "moving_time": 399
     },
     {
       "name": "Lap 4",
       "distance": 1317.2002,
-      "moving_time": 389
+      "moving_time": 394
     }
   ]
 }
