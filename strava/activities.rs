@@ -34,10 +34,16 @@ impl Activity {
     /// # Examples
     ///
     /// ```
+    /// use strava::activities::Activity;
+    /// 
     /// let activity = Activity {
     ///     id: 123,
+    ///     name: "Running".to_string(),
     ///     start_date_local: "2023-10-15T08:30:00Z".to_string(),
-    ///     // ... other activity data ...
+    ///     distance: 5000.0,
+    ///     moving_time: 1800,
+    ///     manual: false,
+    ///     laps: None,
     /// };
     ///
     /// activity.save_to_json();
@@ -81,23 +87,20 @@ impl Activity {
 /// # Example
 ///
 /// ```
+/// use strava::activities::list_activities;
+/// 
 /// let after = 1698472800; // October 28, 2023 0:00:00 AM UTC
 /// let before = 1699599599; // November 09 2023 23:59:59 PM UTC
 /// let token = "your_access_token";
 ///
-/// let activities = list_activities(after, before, token);
-///
-/// match activities {
-///     Some(activities) => {
-///         for activity in activities {
-///             println!("Activity ID: {}", activity.id);
-///             println!("Activity Name: {}", activity.name);
-///             // ... other activity details
-///         }
-///     },
-///     None => {
-///         println!("No activities found within the specified time range.");
+/// if let Some(activities) = list_activities(after, before, token) {
+///     for activity in activities {
+///         println!("Activity ID: {}", activity.id);
+///         println!("Activity Name: {}", activity.name);
+///         // ... other activity details
 ///     }
+/// } else {
+///     println!("No activities found within the specified time range.");
 /// }
 /// ```
 pub fn list_activities(after: i64, before: i64, token: &str) -> Option<Vec<Activity>> {
@@ -105,9 +108,13 @@ pub fn list_activities(after: i64, before: i64, token: &str) -> Option<Vec<Activ
     let params = format!("?before={}&after={}", before, after);
 
     if let Ok(response) = get(path, &params, token) {
-        let activities: Vec<Activity> = serde_json::from_str(&response.body).unwrap();
-        if !activities.is_empty() {
-            Some(activities)
+        let activities: Result<Vec<Activity>, _> = serde_json::from_str(&response.body);
+        if let Ok(activities) = activities {
+            if !activities.is_empty() {
+                Some(activities)
+            } else {
+                None
+            }
         } else {
             None
         }

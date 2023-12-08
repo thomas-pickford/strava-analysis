@@ -149,7 +149,7 @@ pub fn get_splits(lap_size: &str, streams: &Streams) -> Option<Vec<Lap>> {
     let mut distance: f32;
     let end = streams.distance.original_size;
     loop {
-        if streams.distance.data[cur] / format_lap_size > lap_cnt as f32 {
+        if streams.distance.data[cur] / format_lap_size >= lap_cnt as f32 {
             distance = streams.distance.data[cur] - streams.distance.data[start];
             let moving_time = calc_moving_time(start, cur, streams);
             let lap = Lap {
@@ -202,7 +202,7 @@ pub fn get_splits(lap_size: &str, streams: &Streams) -> Option<Vec<Lap>> {
 pub fn calc_moving_time(start: usize, end: usize, streams: &Streams) -> i32 {
     let mut last_moving_time = 0;
     let mut stopped_time = 0;
-    let elapsed_time = streams.time.data[end - 1] - streams.time.data[start];
+    let elapsed_time = streams.time.data[end] - streams.time.data[start];
 
     for i in start..=end - 1 {
         if streams.moving.data[i] {
@@ -388,4 +388,98 @@ pub fn get_week_summary(lap_size: &String, activities: Vec<Activity>) {
         );
     }
     println!("Moving Time: {}\n", format_time(moving_time));
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use strava::streams::{DistanceStream, MovingStream, TimeStream};
+
+    #[test]
+    fn test_format_time() {
+        // one hour
+        assert_eq!(format_time(3600), "1:00:00");
+
+        // 30 minutes
+        assert_eq!(format_time(1800), "30:00");
+
+        // 45 seconds
+        assert_eq!(format_time(45), "0:45");
+
+        // 53 minutes 27 seconds
+        assert_eq!(format_time(3207), "53:27");
+
+        // fastest marathon by Eliud Kipchoge
+        assert_eq!(format_time(7180), "1:59:40");
+    }
+
+    #[test]
+    fn test_calc_moving_time() {
+        let streams = Streams {
+            distance: DistanceStream {
+                data: vec![0.0, 1000.0, 2000.0, 3000.0, 4000.0, 5000.0],
+                original_size: 6,
+            },
+            time: TimeStream {
+                data: vec![0, 100, 200, 300, 400, 500],
+                original_size: 6,
+            },
+            moving: MovingStream {
+                data: vec![true, true, true, true, true, true],
+                original_size: 6,
+            },
+        };
+        let mut moving_time = calc_moving_time(0, 3, &streams);
+        assert_eq!(moving_time, 300);
+
+        moving_time = calc_moving_time(0, 5, &streams);
+        assert_eq!(moving_time, 500);
+    }
+
+    #[test]
+    fn test_get_splits() {
+        let lap_size = String::from("1K");
+        let streams = Streams {
+            distance: DistanceStream {
+                data: vec![0.0, 1000.0, 2000.0, 3000.0, 4000.0, 5000.0],
+                original_size: 6,
+            },
+            time: TimeStream {
+                data: vec![0, 100, 200, 300, 400, 500],
+                original_size: 6,
+            },
+            moving: MovingStream {
+                data: vec![true, true, true, true, true, true],
+                original_size: 6,
+            },
+        };
+        let splits = get_splits(&lap_size, &streams).unwrap();
+        assert_eq!(splits.len(), 5);
+        for lap in splits {
+            assert_eq!(lap.distance, 1000.0);
+            assert_eq!(lap.moving_time, 100);
+        }
+
+        // test that laps are still the same even with a datapoint where the user is not moving for 100 seconds
+        let streams2 = Streams {
+            distance: DistanceStream {
+                data: vec![0.0, 1000.0, 2000.0, 3000.0, 4000.0, 4000.0, 5000.0],
+                original_size: 7,
+            },
+            time: TimeStream {
+                data: vec![0, 100, 200, 300, 400, 500, 600],
+                original_size: 7,
+            },
+            moving: MovingStream {
+                data: vec![true, true, true, true, true, false, true],
+                original_size: 7,
+            },
+        };
+        let splits2 = get_splits(&lap_size, &streams2).unwrap();
+        assert_eq!(splits2.len(), 5);
+        for lap in splits2 {
+            assert_eq!(lap.distance, 1000.0);
+            assert_eq!(lap.moving_time, 100);
+        }
+    }
 }
