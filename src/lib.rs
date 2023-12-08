@@ -17,6 +17,19 @@ pub static SECRETS: &str = "./auth/secrets.json";
 /// # Returns
 ///
 /// Returns `true` if the setup is complete, otherwise `false`.
+///
+/// # Example
+///
+/// ```
+/// use strava_analysis::is_setup;
+///
+/// if is_setup() {
+///     println!("Program options: ");
+/// } else {
+///     println!("Authenticate the new user")
+/// }
+/// 
+/// ```
 pub fn is_setup() -> bool {
     // check if the user.json file exists for main to determine if we should run setup or not.
     if fs::metadata(SECRETS).is_err() {
@@ -25,11 +38,11 @@ pub fn is_setup() -> bool {
     fs::metadata(USER_AUTH).is_ok()
 }
 
-/// Retrieves the summary of activities within a specified time interval.
+/// Retrieves the summary of activities within a specified time range and formats them based on the given lap size.
 ///
 /// # Arguments
 ///
-/// * `interval` - A string representing the interval of the activities (e.g., "1K" for kilometers, "MILE" for miles).
+/// * `lap_size` - A string representing the lap_size of the activities (e.g., "1K" for kilometers, "MILE" for miles).
 /// * `activity` - A reference to an `Activity` struct representing the activity details.
 ///
 /// # Example
@@ -37,25 +50,22 @@ pub fn is_setup() -> bool {
 /// ```
 /// use chrono::NaiveDateTime;
 /// use strava_analysis::get_summary;
+/// use strava::activities::Activity;
 ///
-/// struct Activity {
-///     name: String,
-///     start_date_local: String,
-///     distance: f32,
-///     moving_time: i32,
-/// }
-///
-/// let interval = "1K".to_string();
+/// let lap_size = "1K".to_string();
 /// let activity = Activity {
+///     id: 123456789,
 ///     name: "Running".to_string(),
 ///     start_date_local: "2021-10-01T08:00:00Z".to_string(),
 ///     distance: 5000.0,
 ///     moving_time: 1800,
+///     manual: false,
+///     laps: None,
 /// };
 ///
-/// get_summary(&interval, &activity);
+/// get_summary(&lap_size, &activity);
 /// ```
-pub fn get_summary(interval: &String, activity: &Activity) {
+pub fn get_summary(lap_size: &String, activity: &Activity) {
     println!("{}", activity.name);
     println!(
         "Date: {}",
@@ -63,14 +73,14 @@ pub fn get_summary(interval: &String, activity: &Activity) {
             .expect("Bad date")
             .format("%m-%d-%Y")
     );
-    if interval == "1K" {
+    if lap_size == "1K" {
         let distance = activity.distance / 1000.0;
         println!("Distance: {:.2}K", distance);
         println!(
             "Pace: {} min/k",
             format_time((activity.moving_time as f32 / distance).round() as i32)
         );
-    } else if interval == "MILE" {
+    } else if lap_size == "MILE" {
         let distance = activity.distance * 0.000621371;
         println!("Distance: {:.2}mi", distance);
         println!(
@@ -81,11 +91,11 @@ pub fn get_summary(interval: &String, activity: &Activity) {
     println!("Moving Time: {}\n", format_time(activity.moving_time));
 }
 
-/// Retrieves splits for activities within a specified distance interval.
+/// Retrieves splits from the activity stream formatted by the distance lap_size.
 ///
 /// # Arguments
 ///
-/// * `interval` - The interval for the splits (e.g., "MILE", "1K").
+/// * `lap_size` - The lap_size for the splits (e.g., "MILE", "1K").
 /// * `streams` - The streams containing distance data.
 ///
 /// # Returns
@@ -95,14 +105,27 @@ pub fn get_summary(interval: &String, activity: &Activity) {
 /// # Example
 ///
 /// ```
-/// use strava_analysis::get_splits; 
-/// use strava::streamsStreams;
+/// use strava_analysis::get_splits;
+/// use strava::streams::{Streams, DistanceStream, TimeStream, MovingStream};
 /// use strava::activities::Lap;
 ///
-/// let interval = String::from("MILE");
-/// let streams = Streams::new(); // Replace with actual streams data
+/// let lap_size = String::from("MILE");
+/// let streams = Streams {
+///     distance: DistanceStream {
+///         data: vec![10.0; 1], // Example distance data
+///         original_size: 1,
+///     },
+///     time: TimeStream {
+///         data: vec![100; 1], // Example time data
+///         original_size: 1,
+///     },
+///     moving: MovingStream {
+///         data: vec![true; 1], // Example moving data
+///         original_size: 1,
+///     },
+/// };
 ///
-/// let splits = get_splits(&interval, &streams);
+/// let splits = get_splits(&lap_size, &streams);
 /// if let Some(splits) = splits {
 ///     for lap in splits {
 ///         println!("Lap Name: {}", lap.name);
@@ -111,12 +134,12 @@ pub fn get_summary(interval: &String, activity: &Activity) {
 ///     }
 /// }
 /// ```
-pub fn get_splits(interval: &String, streams: &Streams) -> Option<Vec<Lap>> {
+pub fn get_splits(lap_size: &str, streams: &Streams) -> Option<Vec<Lap>> {
     let mut laps: Vec<Lap> = Vec::new();
-    let mut lap_size = 0.0;
-    match interval.as_str() {
-        "MILE" => lap_size = 1609.34,
-        "1K" => lap_size = 1000.0,
+    let mut format_lap_size = 0.0;
+    match lap_size {
+        "MILE" => format_lap_size = 1609.34,
+        "1K" => format_lap_size = 1000.0,
         _ => println!("Shouldn't hit this"),
     }
 
@@ -126,9 +149,9 @@ pub fn get_splits(interval: &String, streams: &Streams) -> Option<Vec<Lap>> {
     let mut distance: f32;
     let end = streams.distance.original_size;
     loop {
-        if streams.distance.data[cur] / lap_size > lap_cnt as f32 {
+        if streams.distance.data[cur] / format_lap_size > lap_cnt as f32 {
             distance = streams.distance.data[cur] - streams.distance.data[start];
-            let moving_time = calc_moving_time(start, cur, &streams);
+            let moving_time = calc_moving_time(start, cur, streams);
             let lap = Lap {
                 name: format!("Lap {}", lap_cnt),
                 distance,
@@ -143,9 +166,9 @@ pub fn get_splits(interval: &String, streams: &Streams) -> Option<Vec<Lap>> {
 
         // check for missed distance at the end less than the specified lap size
         if cur == end {
-            if (streams.distance.data[end - 1] - streams.distance.data[start]) / lap_size >= 0.1 {
+            if (streams.distance.data[end - 1] - streams.distance.data[start]) / format_lap_size >= 0.1 {
                 distance = streams.distance.data[end - 1] - streams.distance.data[start];
-                let moving_time = calc_moving_time(start, end - 1, &streams);
+                let moving_time = calc_moving_time(start, end - 1, streams);
                 let lap = Lap {
                     name: format!("Lap {}", lap_cnt),
                     distance,
@@ -159,13 +182,13 @@ pub fn get_splits(interval: &String, streams: &Streams) -> Option<Vec<Lap>> {
     }
 }
 
-/// Calculates the moving time between two indices in the given `streams`.
+/// Calculates the moving time between two points in the given `streams`.
 ///
-/// The `start` and `end` indices specify the range of data to consider in the `streams`.
+/// The `start` and `end` points specify the range of data to consider in the `streams`.
 /// The `streams` parameter should contain the relevant time and moving data.
 ///
 /// The function iterates over the specified range and calculates the moving time by subtracting the stopped time from the elapsed time.
-/// Stopped time is calculated by summing the time intervals when the user was not moving.
+/// Stopped time is calculated by summing the time data points when the user was not moving.
 ///
 /// # Arguments
 ///
@@ -203,11 +226,22 @@ pub fn calc_moving_time(start: usize, end: usize, streams: &Streams) -> i32 {
 /// # Returns
 ///
 /// A string representation of the formatted time in the format "HH:MM:SS".
+/// 
+/// # Example
+/// 
+/// ```
+/// use strava_analysis::format_time;
+/// 
+/// let moving_time = 3600;
+/// let time = format_time(moving_time);
+/// 
+/// assert_eq!(time, "1:00:00");
+/// ```
 pub fn format_time(moving_time: i32) -> String {
     let mut time = String::new();
     let mut min = moving_time / 60;
     let sec = moving_time % 60;
-    if min > 60 {
+    if min >= 60 {
         let hour = min / 60;
         min %= 60;
         if min < 10 {
@@ -225,29 +259,17 @@ pub fn format_time(moving_time: i32) -> String {
     time
 }
 
-/// Prompts the user to select a formatting interval for lap size.
+/// Prompts the user to select a formatting lap_size.
 ///
-/// The user is prompted to enter a lap size interval, either "mile" or "1k".
-/// If the user enters a valid interval, it is returned as an `Option<String>`.
+/// The user is prompted to enter a lap size, either "mile" or "1k".
+/// If the user enters a valid lap_size, it is returned as an `Option<String>`.
 /// If the user cancels the request by entering "Q", `None` is returned.
 /// If the user enters an unsupported distance, an error message is displayed and the prompt is repeated.
-///
-/// # Examples
-///
-/// ```
-/// use strava_analysis::get_lap_size;
-///
-/// let lap_size = get_lap_size();
-/// match lap_size {
-///     Some(interval) => println!("Selected lap size interval: {}", interval),
-///     None => println!("Request cancelled by user"),
-/// }
-/// ```
 pub fn get_lap_size() -> Option<String> {
-    println!("Pick formatting interval (mile, 1k):");
+    println!("Pick formatting lap_size (mile, 1k):");
     loop {
         let mut lap_size = String::new();
-        print!("interval> ");
+        print!("lap_size> ");
         io::stdout().flush().expect("Failed to flush stdout");
         io::stdin()
             .read_line(&mut lap_size)
@@ -321,11 +343,11 @@ pub fn get_date_range() -> Option<(String, i64, i64)> {
     }
 }
 
-/// Calculates the summary of a week's activities based on the given distance interval.
+/// Calculates the summary of a week's activities and formats on the given distance lap_size.
 ///
 /// # Arguments
 ///
-/// * `interval` - A reference to a String representing the interval (e.g., "1K", "MILE").
+/// * `lap_size` - A reference to a String representing the lap_size (e.g., "1K", "MILE").
 /// * `activities` - A vector of Activity objects representing the activities for the week.
 ///
 /// # Example
@@ -333,16 +355,16 @@ pub fn get_date_range() -> Option<(String, i64, i64)> {
 /// ```
 /// use strava::activities::Activity;
 ///
-/// let interval = String::from("1K");
+/// let lap_size = String::from("1K");
 /// let activities = vec![
-///     Activity { distance: 500.0, moving_time: 1200 },
-///     Activity { distance: 800.0, moving_time: 1800 },
-///     Activity { distance: 1200.0, moving_time: 2400 },
+///     Activity { id: 1, name: "run1".to_string(), distance: 500.0, moving_time: 1200, laps: None, start_date_local: "2021-10-01T08:00:00Z".to_string(), manual: false },
+///     Activity { id: 2, name: "run2".to_string(), distance: 800.0, moving_time: 1800, laps: None, start_date_local: "2021-10-01T08:00:00Z".to_string(), manual: true },
+///     Activity { id: 3, name: "run3".to_string(), distance: 1200.0, moving_time: 2400, laps: None, start_date_local: "2021-10-01T08:00:00Z".to_string(), manual: false },
 /// ];
 ///
-/// strava_analysis::get_week_summary(&interval, activities);
+/// strava_analysis::get_week_summary(&lap_size, activities);
 /// ```
-pub fn get_week_summary(interval: &String, activities: Vec<Activity>) {
+pub fn get_week_summary(lap_size: &String, activities: Vec<Activity>) {
     let mut distance = 0.0;
     let mut moving_time = 0;
     for activity in activities {
@@ -350,14 +372,14 @@ pub fn get_week_summary(interval: &String, activities: Vec<Activity>) {
         moving_time += activity.moving_time;
     }
     println!("Week Overview");
-    if interval == "1K" {
+    if lap_size == "1K" {
         distance /= 1000.0;
         println!("Distance: {:.2}K", distance);
         println!(
             "Pace: {} min/k",
             format_time((moving_time as f32 / distance).round() as i32)
         );
-    } else if interval == "MILE" {
+    } else if lap_size == "MILE" {
         distance *= 0.000621371;
         println!("Distance: {:.2}mi", distance);
         println!(
