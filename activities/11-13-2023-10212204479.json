@@ -1,0 +1,50 @@
+{
+  "id": 10212204479,
+  "name": "Late start",
+  "distance": 12878.2,
+  "moving_time": 3331,
+  "manual": false,
+  "start_date_local": "2023-11-13T08:23:50Z",
+  "laps": [
+    {
+      "name": "Lap 1",
+      "distance": 1617.0,
+      "moving_time": 439
+    },
+    {
+      "name": "Lap 2",
+      "distance": 1605.3,
+      "moving_time": 427
+    },
+    {
+      "name": "Lap 3",
+      "distance": 1625.2998,
+      "moving_time": 419
+    },
+    {
+      "name": "Lap 4",
+      "distance": 1603.1001,
+      "moving_time": 418
+    },
+    {
+      "name": "Lap 5",
+      "distance": 1612.5,
+      "moving_time": 413
+    },
+    {
+      "name": "Lap 6",
+      "distance": 1606.3003,
+      "moving_time": 399
+    },
+    {
+      "name": "Lap 7",
+      "distance": 1597.5996,
+      "moving_time": 401
+    },
+    {
+      "name": "Lap 8",
+      "distance": 1607.5,
+      "moving_time": 414
+    }
+  ]
+}

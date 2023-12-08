@@ -1,0 +1,20 @@
+{
+  "id": 10235859799,
+  "name": "Warmup attempt",
+  "distance": 3237.1,
+  "moving_time": 835,
+  "manual": false,
+  "start_date_local": "2023-11-17T11:30:48Z",
+  "laps": [
+    {
+      "name": "Lap 1",
+      "distance": 1617.2,
+      "moving_time": 428
+    },
+    {
+      "name": "Lap 2",
+      "distance": 1619.9001,
+      "moving_time": 407
+    }
+  ]
+}

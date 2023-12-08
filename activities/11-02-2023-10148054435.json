@@ -1,0 +1,60 @@
+{
+  "id": 10148054435,
+  "name": "Sweet honey 🥵",
+  "distance": 16101.1,
+  "moving_time": 4140,
+  "manual": false,
+  "start_date_local": "2023-11-02T07:35:10Z",
+  "laps": [
+    {
+      "name": "Lap 1",
+      "distance": 1613.3,
+      "moving_time": 434
+    },
+    {
+      "name": "Lap 2",
+      "distance": 1608.7,
+      "moving_time": 402
+    },
+    {
+      "name": "Lap 3",
+      "distance": 1609.0,
+      "moving_time": 402
+    },
+    {
+      "name": "Lap 4",
+      "distance": 1606.7998,
+      "moving_time": 404
+    },
+    {
+      "name": "Lap 5",
+      "distance": 1611.1001,
+      "moving_time": 425
+    },
+    {
+      "name": "Lap 6",
+      "distance": 1609.8999,
+      "moving_time": 417
+    },
+    {
+      "name": "Lap 7",
+      "distance": 1610.9004,
+      "moving_time": 417
+    },
+    {
+      "name": "Lap 8",
+      "distance": 1605.7998,
+      "moving_time": 412
+    },
+    {
+      "name": "Lap 9",
+      "distance": 1610.4004,
+      "moving_time": 413
+    },
+    {
+      "name": "Lap 10",
+      "distance": 1607.5996,
+      "moving_time": 413
+    }
+  ]
+}

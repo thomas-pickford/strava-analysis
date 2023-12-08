@@ -1,0 +1,65 @@
+{
+  "id": 10142757517,
+  "name": "The job",
+  "distance": 16373.7,
+  "moving_time": 4237,
+  "manual": false,
+  "start_date_local": "2023-11-01T06:37:22Z",
+  "laps": [
+    {
+      "name": "Lap 1",
+      "distance": 1612.6,
+      "moving_time": 464
+    },
+    {
+      "name": "Lap 2",
+      "distance": 1608.7999,
+      "moving_time": 428
+    },
+    {
+      "name": "Lap 3",
+      "distance": 1607.8999,
+      "moving_time": 428
+    },
+    {
+      "name": "Lap 4",
+      "distance": 1610.1001,
+      "moving_time": 422
+    },
+    {
+      "name": "Lap 5",
+      "distance": 1611.1001,
+      "moving_time": 407
+    },
+    {
+      "name": "Lap 6",
+      "distance": 1608.5,
+      "moving_time": 408
+    },
+    {
+      "name": "Lap 7",
+      "distance": 1607.7998,
+      "moving_time": 401
+    },
+    {
+      "name": "Lap 8",
+      "distance": 1611.5,
+      "moving_time": 408
+    },
+    {
+      "name": "Lap 9",
+      "distance": 1609.7002,
+      "moving_time": 400
+    },
+    {
+      "name": "Lap 10",
+      "distance": 1609.4004,
+      "moving_time": 405
+    },
+    {
+      "name": "Lap 11",
+      "distance": 276.2998,
+      "moving_time": 65
+    }
+  ]
+}

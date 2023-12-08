@@ -1,0 +1,45 @@
+{
+  "id": 10235860352,
+  "name": "MV track be empty",
+  "distance": 11268.8,
+  "moving_time": 3022,
+  "manual": false,
+  "start_date_local": "2023-11-17T12:18:51Z",
+  "laps": [
+    {
+      "name": "Lap 1",
+      "distance": 1613.9,
+      "moving_time": 448
+    },
+    {
+      "name": "Lap 2",
+      "distance": 1624.7001,
+      "moving_time": 384
+    },
+    {
+      "name": "Lap 3",
+      "distance": 1592.6001,
+      "moving_time": 416
+    },
+    {
+      "name": "Lap 4",
+      "distance": 1625.8999,
+      "moving_time": 387
+    },
+    {
+      "name": "Lap 5",
+      "distance": 1599.3999,
+      "moving_time": 426
+    },
+    {
+      "name": "Lap 6",
+      "distance": 1601.7998,
+      "moving_time": 452
+    },
+    {
+      "name": "Lap 7",
+      "distance": 1610.5,
+      "moving_time": 428
+    }
+  ]
+}

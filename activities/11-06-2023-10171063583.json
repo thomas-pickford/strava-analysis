@@ -1,0 +1,55 @@
+{
+  "id": 10171063583,
+  "name": "Daylight savings 🙏",
+  "distance": 14498.1,
+  "moving_time": 3724,
+  "manual": false,
+  "start_date_local": "2023-11-06T06:33:03Z",
+  "laps": [
+    {
+      "name": "Lap 1",
+      "distance": 1629.3,
+      "moving_time": 450
+    },
+    {
+      "name": "Lap 2",
+      "distance": 1599.8999,
+      "moving_time": 407
+    },
+    {
+      "name": "Lap 3",
+      "distance": 1621.0002,
+      "moving_time": 311
+    },
+    {
+      "name": "Lap 4",
+      "distance": 1596.6997,
+      "moving_time": 401
+    },
+    {
+      "name": "Lap 5",
+      "distance": 1611.2002,
+      "moving_time": 394
+    },
+    {
+      "name": "Lap 6",
+      "distance": 1605.8999,
+      "moving_time": 391
+    },
+    {
+      "name": "Lap 7",
+      "distance": 1620.0,
+      "moving_time": 436
+    },
+    {
+      "name": "Lap 8",
+      "distance": 1608.2002,
+      "moving_time": 412
+    },
+    {
+      "name": "Lap 9",
+      "distance": 1593.0996,
+      "moving_time": 416
+    }
+  ]
+}

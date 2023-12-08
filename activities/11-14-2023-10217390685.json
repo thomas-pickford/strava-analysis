@@ -1,0 +1,60 @@
+{
+  "id": 10217390685,
+  "name": "Humbled Jason",
+  "distance": 16145.4,
+  "moving_time": 4380,
+  "manual": false,
+  "start_date_local": "2023-11-14T06:31:37Z",
+  "laps": [
+    {
+      "name": "Lap 1",
+      "distance": 1614.3,
+      "moving_time": 440
+    },
+    {
+      "name": "Lap 2",
+      "distance": 1612.8999,
+      "moving_time": 421
+    },
+    {
+      "name": "Lap 3",
+      "distance": 1618.9001,
+      "moving_time": 427
+    },
+    {
+      "name": "Lap 4",
+      "distance": 1598.0,
+      "moving_time": 420
+    },
+    {
+      "name": "Lap 5",
+      "distance": 1618.2998,
+      "moving_time": 461
+    },
+    {
+      "name": "Lap 6",
+      "distance": 1600.6997,
+      "moving_time": 449
+    },
+    {
+      "name": "Lap 7",
+      "distance": 1609.2002,
+      "moving_time": 453
+    },
+    {
+      "name": "Lap 8",
+      "distance": 1610.9004,
+      "moving_time": 452
+    },
+    {
+      "name": "Lap 9",
+      "distance": 1613.5,
+      "moving_time": 440
+    },
+    {
+      "name": "Lap 10",
+      "distance": 1605.3994,
+      "moving_time": 406
+    }
+  ]
+}

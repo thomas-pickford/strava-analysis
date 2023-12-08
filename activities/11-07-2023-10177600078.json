@@ -1,0 +1,65 @@
+{
+  "id": 10177600078,
+  "name": "New park",
+  "distance": 17280.7,
+  "moving_time": 4587,
+  "manual": false,
+  "start_date_local": "2023-11-07T07:41:02Z",
+  "laps": [
+    {
+      "name": "Lap 1",
+      "distance": 1624.2999,
+      "moving_time": 444
+    },
+    {
+      "name": "Lap 2",
+      "distance": 1597.3,
+      "moving_time": 433
+    },
+    {
+      "name": "Lap 3",
+      "distance": 1622.2998,
+      "moving_time": 460
+    },
+    {
+      "name": "Lap 4",
+      "distance": 1592.2002,
+      "moving_time": 440
+    },
+    {
+      "name": "Lap 5",
+      "distance": 1628.7002,
+      "moving_time": 460
+    },
+    {
+      "name": "Lap 6",
+      "distance": 1593.0,
+      "moving_time": 414
+    },
+    {
+      "name": "Lap 7",
+      "distance": 1625.0,
+      "moving_time": 423
+    },
+    {
+      "name": "Lap 8",
+      "distance": 1592.8994,
+      "moving_time": 405
+    },
+    {
+      "name": "Lap 9",
+      "distance": 1618.5,
+      "moving_time": 432
+    },
+    {
+      "name": "Lap 10",
+      "distance": 1619.4004,
+      "moving_time": 412
+    },
+    {
+      "name": "Lap 11",
+      "distance": 1167.1992,
+      "moving_time": 266
+    }
+  ]
+}
