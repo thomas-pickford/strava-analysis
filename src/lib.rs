@@ -28,7 +28,7 @@ pub static SECRETS: &str = "./auth/secrets.json";
 /// } else {
 ///     println!("Authenticate the new user")
 /// }
-/// 
+///
 /// ```
 pub fn is_setup() -> bool {
     // check if the user.json file exists for main to determine if we should run setup or not.
@@ -166,7 +166,9 @@ pub fn get_splits(lap_size: &str, streams: &Streams) -> Option<Vec<Lap>> {
 
         // check for missed distance at the end less than the specified lap size
         if cur == end {
-            if (streams.distance.data[end - 1] - streams.distance.data[start]) / format_lap_size >= 0.1 {
+            if (streams.distance.data[end - 1] - streams.distance.data[start]) / format_lap_size
+                >= 0.1
+            {
                 distance = streams.distance.data[end - 1] - streams.distance.data[start];
                 let moving_time = calc_moving_time(start, end - 1, streams);
                 let lap = Lap {
@@ -226,15 +228,15 @@ pub fn calc_moving_time(start: usize, end: usize, streams: &Streams) -> i32 {
 /// # Returns
 ///
 /// A string representation of the formatted time in the format "HH:MM:SS".
-/// 
+///
 /// # Example
-/// 
+///
 /// ```
 /// use strava_analysis::format_time;
-/// 
+///
 /// let moving_time = 3600;
 /// let time = format_time(moving_time);
-/// 
+///
 /// assert_eq!(time, "1:00:00");
 /// ```
 pub fn format_time(moving_time: i32) -> String {

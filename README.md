@@ -1,5 +1,5 @@
 # Setup
-Requires a 'dev' or 'nightly' version of rust to run. Ex: `rustup override set nightly`
+Requires a 'dev' or 'nightly' version of rust to run due to `Rocket` dependency. Ex: `rustup override set nightly`
 
 At this time it is required that a user provides their own Strava API app credentials. Those need to be created and placed inside 
 a directory called auth in a file named secrets.json. To setup your own app follow the instructions [here]("https://developers.strava.com/docs/getting-started/").
@@ -46,15 +46,10 @@ Choose an option from the menu
 - Store activity laps in json file
 - Option to get a summary of week activities
 
-### Version 0.2.1
-- Rewrite auth callback to not require dev or nightly versions of rust
-
-### Version 0.2.2
-- Add analysis options
-
 ### Next steps
-- Format summary with user selected distances
-- Get splits from data stream using user defined distances
+- Rewrite auth callback with Rocket v0.5.0 to not require dev or nightly versions of rust
+- Add graphical analysis options that use the downloaded files
+- Increase functionality of included strava crate
 
 # Acknowledgments
 Strava Authentication - https://francoisbest.com/posts/2019/strava-auth-cli-in-rust

@@ -35,7 +35,7 @@ impl Activity {
     ///
     /// ```
     /// use strava::activities::Activity;
-    /// 
+    ///
     /// let activity = Activity {
     ///     id: 123,
     ///     name: "Running".to_string(),
@@ -88,7 +88,7 @@ impl Activity {
 ///
 /// ```
 /// use strava::activities::list_activities;
-/// 
+///
 /// let after = 1698472800; // October 28, 2023 0:00:00 AM UTC
 /// let before = 1699599599; // November 09 2023 23:59:59 PM UTC
 /// let token = "your_access_token";

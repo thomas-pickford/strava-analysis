@@ -52,7 +52,7 @@ pub struct MovingStream {
 ///
 /// ```
 /// use strava::streams::get_streams;
-/// 
+///
 /// let id = 12345;
 /// let keys = "distance,time,moving";
 /// let access_token = "your_access_token";

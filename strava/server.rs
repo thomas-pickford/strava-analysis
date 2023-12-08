@@ -22,8 +22,8 @@ impl AuthInfo {
     ///
     /// ```
     /// use strava::server::AuthInfo;
-    /// use rocket::http::RawStr; 
-    /// 
+    /// use rocket::http::RawStr;
+    ///
     /// let code = RawStr::from_str("12345");
     /// let scopes = RawStr::from_str("scope1,scope2");
     /// let auth_info = AuthInfo::new(&code, &scopes);
