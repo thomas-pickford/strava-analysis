@@ -304,7 +304,7 @@ pub fn get_date_range() -> Option<(String, i64, i64)> {
         // verify valid dates and range
         let before = NaiveDate::parse_from_str(&end, "%m/%d/%Y");
         let after = NaiveDate::parse_from_str(&start, "%m/%d/%Y");
-        if before.is_ok() && after.is_ok() && (before.unwrap() > after.unwrap()) {
+        if before.is_ok() && after.is_ok() && (before.unwrap() >= after.unwrap()) {
             if let Some(lap_size) = get_lap_size() {
                 println!();
                 return Some((
